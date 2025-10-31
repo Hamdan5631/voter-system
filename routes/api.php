@@ -1,0 +1,66 @@
+<?php
+
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\VoterController;
+use App\Http\Controllers\Api\WardController;
+use App\Http\Controllers\Api\UserController;
+use Illuminate\Support\Facades\Route;
+
+/*
+|--------------------------------------------------------------------------
+| API Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register API routes for your application. These
+| routes are loaded by the RouteServiceProvider and all of them will
+| be assigned to the "api" middleware group. Make something great!
+|
+*/
+
+// Public routes
+Route::post('/auth/login', [AuthController::class, 'login'])->name('api.auth.login');
+
+// Protected routes (require authentication)
+Route::middleware('auth:sanctum')->group(function () {
+    // Auth routes
+    Route::post('/auth/logout', [AuthController::class, 'logout'])->name('api.auth.logout');
+    Route::get('/auth/user', [AuthController::class, 'user'])->name('api.auth.user');
+
+    // Wards routes (Superadmin only)
+    Route::middleware('role:superadmin')->group(function () {
+        Route::apiResource('wards', WardController::class);
+    });
+
+    // Users routes (Superadmin only)
+    Route::middleware('role:superadmin')->group(function () {
+        Route::apiResource('users', UserController::class);
+    });
+
+    // Voters routes
+    Route::prefix('voters')->group(function () {
+        Route::get('/', [VoterController::class, 'index'])->name('api.voters.index');
+        Route::get('/{voter}', [VoterController::class, 'show'])->name('api.voters.show');
+        
+        // Superadmin only
+        Route::middleware('role:superadmin')->group(function () {
+            Route::post('/', [VoterController::class, 'store'])->name('api.voters.store');
+            Route::put('/{voter}', [VoterController::class, 'update'])->name('api.voters.update');
+            Route::delete('/{voter}', [VoterController::class, 'destroy'])->name('api.voters.destroy');
+        });
+
+        // Team Lead and Booth Agent can update status
+        Route::middleware('role:team_lead|booth_agent|superadmin')->group(function () {
+            Route::patch('/{voter}/status', [VoterController::class, 'updateStatus'])->name('api.voters.update-status');
+        });
+
+        // Worker can update remark
+        Route::middleware('role:worker')->group(function () {
+            Route::patch('/{voter}/remark', [VoterController::class, 'updateRemark'])->name('api.voters.update-remark');
+        });
+
+        // Team Lead can assign voters to workers
+        Route::middleware('role:team_lead')->group(function () {
+            Route::post('/{voter}/assign', [VoterController::class, 'assignWorker'])->name('api.voters.assign-worker');
+        });
+    });
+});
