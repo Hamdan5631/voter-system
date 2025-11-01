@@ -12,6 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('wards', function (Blueprint $table) {
+            $table->dropColumn('panchayat');
             $table->foreignId('panchayat_id')->nullable()->after('ward_number')->constrained('panchayats')->onDelete('cascade');
         });
     }
@@ -24,6 +25,7 @@ return new class extends Migration
         Schema::table('wards', function (Blueprint $table) {
             $table->dropForeign(['panchayat_id']);
             $table->dropColumn('panchayat_id');
+            $table->string('panchayat')->after('ward_number');
         });
     }
 };
