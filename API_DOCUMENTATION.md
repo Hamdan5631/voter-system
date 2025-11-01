@@ -101,6 +101,182 @@ POST /api/auth/logout
 
 ---
 
+### Panchayats (Superadmin Only)
+
+#### List Panchayats
+```
+GET /api/panchayats
+```
+
+**Query Parameters:**
+- `district` (optional) - Filter by district
+- `search` (optional) - Search by name or code
+- `per_page` (optional, default: 15) - Items per page
+
+**Response (200):**
+```json
+{
+  "data": [
+    {
+      "id": 1,
+      "name": "Varkala",
+      "code": "TVM001",
+      "district": "Thiruvananthapuram",
+      "description": "Varkala Panchayat",
+      "wards_count": 5,
+      "created_at": "2024-01-01T00:00:00.000000Z",
+      "updated_at": "2024-01-01T00:00:00.000000Z"
+    }
+  ],
+  "links": { ... },
+  "meta": { ... }
+}
+```
+
+---
+
+#### Create Panchayat
+```
+POST /api/panchayats
+```
+
+**Request Body:**
+```json
+{
+  "name": "New Panchayat",
+  "code": "NEW001",
+  "district": "Thiruvananthapuram",
+  "description": "New Panchayat Description"
+}
+```
+
+**Validation:**
+- `name`: required|string|max:255
+- `code`: nullable|string|unique:panchayats,code
+- `district`: nullable|string|max:255
+- `description`: nullable|string
+
+**Response (201):**
+```json
+{
+  "message": "Panchayat created successfully",
+  "panchayat": {
+    "id": 1,
+    "name": "New Panchayat",
+    "code": "NEW001",
+    "district": "Thiruvananthapuram",
+    "description": "New Panchayat Description",
+    "created_at": "2024-01-01T00:00:00.000000Z",
+    "updated_at": "2024-01-01T00:00:00.000000Z"
+  }
+}
+```
+
+---
+
+#### Get Panchayat
+```
+GET /api/panchayats/{id}
+```
+
+**Response (200):**
+```json
+{
+  "id": 1,
+  "name": "Varkala",
+  "code": "TVM001",
+  "district": "Thiruvananthapuram",
+  "description": "Varkala Panchayat",
+  "wards": [
+    {
+      "id": 1,
+      "name": "Ward 1",
+      "ward_number": "WARD001",
+      "description": "First ward area"
+    }
+  ],
+  "created_at": "2024-01-01T00:00:00.000000Z",
+  "updated_at": "2024-01-01T00:00:00.000000Z"
+}
+```
+
+---
+
+#### Update Panchayat
+```
+PUT /api/panchayats/{id}
+```
+
+**Request Body:** (all fields optional)
+```json
+{
+  "name": "Updated Panchayat Name",
+  "code": "UPD001",
+  "district": "Kollam",
+  "description": "Updated description"
+}
+```
+
+**Response (200):**
+```json
+{
+  "message": "Panchayat updated successfully",
+  "panchayat": { ... }
+}
+```
+
+---
+
+#### Delete Panchayat
+```
+DELETE /api/panchayats/{id}
+```
+
+**Response (200):**
+```json
+{
+  "message": "Panchayat deleted successfully"
+}
+```
+
+---
+
+#### Get Wards by Panchayat
+```
+GET /api/panchayats/{panchayat}/wards
+```
+
+**Query Parameters:**
+- `search` (optional) - Search by ward name or ward number
+- `per_page` (optional, default: 15) - Items per page
+
+**Response (200):**
+```json
+{
+  "data": [
+    {
+      "id": 1,
+      "name": "Ward 1",
+      "ward_number": "WARD001",
+      "panchayat_id": 1,
+      "description": "First ward area",
+      "panchayat": {
+        "id": 1,
+        "name": "Varkala",
+        "code": "TVM001",
+        "district": "Thiruvananthapuram"
+      },
+      "created_at": "2024-01-01T00:00:00.000000Z",
+      "updated_at": "2024-01-01T00:00:00.000000Z"
+    }
+  ],
+  "links": { ... },
+  "meta": { ... }
+}
+```
+
+---
+
 ### Wards (Superadmin Only)
 
 #### List Wards
@@ -109,6 +285,7 @@ GET /api/wards
 ```
 
 **Query Parameters:**
+- `panchayat_id` (optional) - Filter by panchayat
 - `search` (optional) - Search by name or ward number
 - `per_page` (optional, default: 15) - Items per page
 
@@ -120,8 +297,14 @@ GET /api/wards
       "id": 1,
       "name": "Ward 1",
       "ward_number": "WARD001",
-      "panchayat": "Panchayat A",
+      "panchayat_id": 1,
       "description": "First ward area",
+      "panchayat": {
+        "id": 1,
+        "name": "Varkala",
+        "code": "TVM001",
+        "district": "Thiruvananthapuram"
+      },
       "created_at": "2024-01-01T00:00:00.000000Z",
       "updated_at": "2024-01-01T00:00:00.000000Z"
     }
@@ -143,7 +326,7 @@ POST /api/wards
 {
   "name": "Ward 3",
   "ward_number": "WARD003",
-  "panchayat": "Panchayat C",
+  "panchayat_id": 1,
   "description": "Third ward area"
 }
 ```
@@ -151,7 +334,7 @@ POST /api/wards
 **Validation:**
 - `name`: required|string|max:255
 - `ward_number`: required|string|unique:wards,ward_number
-- `panchayat`: required|string|max:255
+- `panchayat_id`: required|exists:panchayats,id
 - `description`: nullable|string
 
 **Response (201):**
@@ -162,8 +345,13 @@ POST /api/wards
     "id": 3,
     "name": "Ward 3",
     "ward_number": "WARD003",
-    "panchayat": "Panchayat C",
+    "panchayat_id": 1,
     "description": "Third ward area",
+    "panchayat": {
+      "id": 1,
+      "name": "Varkala",
+      "code": "TVM001"
+    },
     "created_at": "2024-01-01T00:00:00.000000Z",
     "updated_at": "2024-01-01T00:00:00.000000Z"
   }
@@ -183,8 +371,14 @@ GET /api/wards/{id}
   "id": 1,
   "name": "Ward 1",
   "ward_number": "WARD001",
-  "panchayat": "Panchayat A",
+  "panchayat_id": 1,
   "description": "First ward area",
+  "panchayat": {
+    "id": 1,
+    "name": "Varkala",
+    "code": "TVM001",
+    "district": "Thiruvananthapuram"
+  },
   "users": [ ... ],
   "voters": [ ... ],
   "created_at": "2024-01-01T00:00:00.000000Z",
@@ -204,7 +398,7 @@ PUT /api/wards/{id}
 {
   "name": "Updated Ward Name",
   "ward_number": "WARD001UPDATED",
-  "panchayat": "Updated Panchayat",
+  "panchayat_id": 2,
   "description": "Updated description"
 }
 ```
@@ -534,6 +728,8 @@ POST /api/voters/{id}/assign
 
 | Action | Superadmin | Team Lead | Booth Agent | Worker |
 |--------|-----------|-----------|-------------|--------|
+| Create Panchayat | ✅ | ❌ | ❌ | ❌ |
+| Manage Panchayat | ✅ | ❌ | ❌ | ❌ |
 | Create Ward | ✅ | ❌ | ❌ | ❌ |
 | Create User | ✅ | ❌ | ❌ | ❌ |
 | Create Voter | ✅ | ❌ | ❌ | ❌ |

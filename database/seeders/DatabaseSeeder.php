@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use App\Models\Ward;
+use App\Models\Panchayat;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -17,6 +18,9 @@ class DatabaseSeeder extends Seeder
         // Seed roles first
         $this->call(RoleSeeder::class);
 
+        // Seed panchayats
+        $this->call(PanchayatSeeder::class);
+
         // Create superadmin
         $superadmin = User::create([
             'name' => 'Super Admin',
@@ -27,20 +31,38 @@ class DatabaseSeeder extends Seeder
         ]);
         $superadmin->assignRole('superadmin');
 
-        // Create sample wards
-        $ward1 = Ward::create([
-            'name' => 'Ward 1',
-            'ward_number' => 'WARD001',
-            'panchayat' => 'Panchayat A',
-            'description' => 'First ward area',
-        ]);
+        // Get first panchayat for sample wards
+        $panchayat = Panchayat::first();
+        
+        if ($panchayat) {
+            // Create sample wards
+            $ward1 = Ward::create([
+                'name' => 'Ward 1',
+                'ward_number' => 'WARD001',
+                'panchayat_id' => $panchayat->id,
+                'description' => 'First ward area',
+            ]);
 
-        $ward2 = Ward::create([
-            'name' => 'Ward 2',
-            'ward_number' => 'WARD002',
-            'panchayat' => 'Panchayat B',
-            'description' => 'Second ward area',
-        ]);
+            $ward2 = Ward::create([
+                'name' => 'Ward 2',
+                'ward_number' => 'WARD002',
+                'panchayat_id' => $panchayat->id,
+                'description' => 'Second ward area',
+            ]);
+        } else {
+            // Fallback: Create sample wards without panchayat
+            $ward1 = Ward::create([
+                'name' => 'Ward 1',
+                'ward_number' => 'WARD001',
+                'description' => 'First ward area',
+            ]);
+
+            $ward2 = Ward::create([
+                'name' => 'Ward 2',
+                'ward_number' => 'WARD002',
+                'description' => 'Second ward area',
+            ]);
+        }
 
         // Create team leads
         $teamLead1 = User::create([

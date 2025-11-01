@@ -17,7 +17,7 @@ class Ward extends Model
     protected $fillable = [
         'name',
         'ward_number',
-        'panchayat',
+        'panchayat_id',
         'description',
     ];
 
@@ -59,5 +59,13 @@ class Ward extends Model
     public function voters()
     {
         return $this->hasMany(Voter::class);
+    }
+
+    /**
+     * Get the panchayat that owns this ward.
+     */
+    public function panchayat()
+    {
+        return $this->belongsTo(Panchayat::class);
     }
 }

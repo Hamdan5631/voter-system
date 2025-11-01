@@ -778,3 +778,67 @@
 #44 /Users/mohammedhamdan/Documents/Workspace/voters-list-api/artisan(14): Illuminate\\Foundation\\Console\\Kernel->handle(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
 #45 {main}
 "} 
+[2025-11-01 13:16:16] local.ERROR: Uncaught InvalidArgumentException: Please provide a valid cache path. in /Users/mohammedhamdan/Documents/Workspace/voters-list-api/vendor/laravel/framework/src/Illuminate/View/Compilers/Compiler.php:67
+Stack trace:
+#0 /Users/mohammedhamdan/Documents/Workspace/voters-list-api/vendor/laravel/framework/src/Illuminate/View/ViewServiceProvider.php(102): Illuminate\View\Compilers\Compiler->__construct(Object(Illuminate\Filesystem\Filesystem), NULL, '', true, 'php')
+#1 /Users/mohammedhamdan/Documents/Workspace/voters-list-api/vendor/laravel/framework/src/Illuminate/Container/Container.php(908): Illuminate\View\ViewServiceProvider->Illuminate\View\{closure}(Object(Illuminate\Foundation\Application), Array)
+#2 /Users/mohammedhamdan/Documents/Workspace/voters-list-api/vendor/laravel/framework/src/Illuminate/Container/Container.php(795): Illuminate\Container\Container->build(Object(Closure))
+#3 /Users/mohammedhamdan/Documents/Workspace/voters-list-api/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(986): Illuminate\Container\Container->resolve('blade.compiler', Array, true)
+#4 /Users/mohammedhamdan/Documents/Workspace/voters-list-api/vendor/laravel/framework/src/Illuminate/Container/Container.php(731): Illuminate\Foundation\Application->resolve('blade.compiler', Array)
+#5 /Users/mohammedhamdan/Documents/Workspace/voters-list-api/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(971): Illuminate\Container\Container->make('blade.compiler', Array)
+#6 /Users/mohammedhamdan/Documents/Workspace/voters-list-api/vendor/laravel/framework/src/Illuminate/Foundation/helpers.php(120): Illuminate\Foundation\Application->make('blade.compiler', Array)
+#7 Command line code(1): app('Illuminate\\View...')
+#8 {main}
+  thrown {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Uncaught InvalidArgumentException: Please provide a valid cache path. in /Users/mohammedhamdan/Documents/Workspace/voters-list-api/vendor/laravel/framework/src/Illuminate/View/Compilers/Compiler.php:67
+Stack trace:
+#0 /Users/mohammedhamdan/Documents/Workspace/voters-list-api/vendor/laravel/framework/src/Illuminate/View/ViewServiceProvider.php(102): Illuminate\\View\\Compilers\\Compiler->__construct(Object(Illuminate\\Filesystem\\Filesystem), NULL, '', true, 'php')
+#1 /Users/mohammedhamdan/Documents/Workspace/voters-list-api/vendor/laravel/framework/src/Illuminate/Container/Container.php(908): Illuminate\\View\\ViewServiceProvider->Illuminate\\View\\{closure}(Object(Illuminate\\Foundation\\Application), Array)
+#2 /Users/mohammedhamdan/Documents/Workspace/voters-list-api/vendor/laravel/framework/src/Illuminate/Container/Container.php(795): Illuminate\\Container\\Container->build(Object(Closure))
+#3 /Users/mohammedhamdan/Documents/Workspace/voters-list-api/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(986): Illuminate\\Container\\Container->resolve('blade.compiler', Array, true)
+#4 /Users/mohammedhamdan/Documents/Workspace/voters-list-api/vendor/laravel/framework/src/Illuminate/Container/Container.php(731): Illuminate\\Foundation\\Application->resolve('blade.compiler', Array)
+#5 /Users/mohammedhamdan/Documents/Workspace/voters-list-api/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(971): Illuminate\\Container\\Container->make('blade.compiler', Array)
+#6 /Users/mohammedhamdan/Documents/Workspace/voters-list-api/vendor/laravel/framework/src/Illuminate/Foundation/helpers.php(120): Illuminate\\Foundation\\Application->make('blade.compiler', Array)
+#7 Command line code(1): app('Illuminate\\\\View...')
+#8 {main}
+  thrown at /Users/mohammedhamdan/Documents/Workspace/voters-list-api/vendor/laravel/framework/src/Illuminate/View/Compilers/Compiler.php:67)
+[stacktrace]
+#0 {main}
+"} 
+[2025-11-01 13:20:04] local.ERROR: Unclosed '{' on line 9 {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Unclosed '{' on line 9 at /Users/mohammedhamdan/Documents/Workspace/voters-list-api/app/Models/Ward.php:71)
+[stacktrace]
+#0 {main}
+"} 
+[2025-11-01 13:20:15] local.ERROR: Unclosed '{' on line 9 {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Unclosed '{' on line 9 at /Users/mohammedhamdan/Documents/Workspace/voters-list-api/app/Models/Ward.php:71)
+[stacktrace]
+#0 {main}
+"} 
+[2025-11-01 13:21:16] local.ERROR: Unclosed '{' on line 9 {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Unclosed '{' on line 9 at /Users/mohammedhamdan/Documents/Workspace/voters-list-api/app/Models/Ward.php:71)
+[stacktrace]
+#0 {main}
+"} 
+[2025-11-01 13:26:16] local.ERROR: Uncaught InvalidArgumentException: Please provide a valid cache path. in /Users/mohammedhamdan/Documents/Workspace/voters-list-api/vendor/laravel/framework/src/Illuminate/View/Compilers/Compiler.php:67
+Stack trace:
+#0 /Users/mohammedhamdan/Documents/Workspace/voters-list-api/vendor/laravel/framework/src/Illuminate/View/ViewServiceProvider.php(102): Illuminate\View\Compilers\Compiler->__construct(Object(Illuminate\Filesystem\Filesystem), NULL, '', true, 'php')
+#1 /Users/mohammedhamdan/Documents/Workspace/voters-list-api/vendor/laravel/framework/src/Illuminate/Container/Container.php(908): Illuminate\View\ViewServiceProvider->Illuminate\View\{closure}(Object(Illuminate\Foundation\Application), Array)
+#2 /Users/mohammedhamdan/Documents/Workspace/voters-list-api/vendor/laravel/framework/src/Illuminate/Container/Container.php(795): Illuminate\Container\Container->build(Object(Closure))
+#3 /Users/mohammedhamdan/Documents/Workspace/voters-list-api/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(986): Illuminate\Container\Container->resolve('blade.compiler', Array, true)
+#4 /Users/mohammedhamdan/Documents/Workspace/voters-list-api/vendor/laravel/framework/src/Illuminate/Container/Container.php(731): Illuminate\Foundation\Application->resolve('blade.compiler', Array)
+#5 /Users/mohammedhamdan/Documents/Workspace/voters-list-api/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(971): Illuminate\Container\Container->make('blade.compiler', Array)
+#6 /Users/mohammedhamdan/Documents/Workspace/voters-list-api/vendor/laravel/framework/src/Illuminate/Foundation/helpers.php(120): Illuminate\Foundation\Application->make('blade.compiler', Array)
+#7 Command line code(1): app('Illuminate\\View...')
+#8 {main}
+  thrown {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Uncaught InvalidArgumentException: Please provide a valid cache path. in /Users/mohammedhamdan/Documents/Workspace/voters-list-api/vendor/laravel/framework/src/Illuminate/View/Compilers/Compiler.php:67
+Stack trace:
+#0 /Users/mohammedhamdan/Documents/Workspace/voters-list-api/vendor/laravel/framework/src/Illuminate/View/ViewServiceProvider.php(102): Illuminate\\View\\Compilers\\Compiler->__construct(Object(Illuminate\\Filesystem\\Filesystem), NULL, '', true, 'php')
+#1 /Users/mohammedhamdan/Documents/Workspace/voters-list-api/vendor/laravel/framework/src/Illuminate/Container/Container.php(908): Illuminate\\View\\ViewServiceProvider->Illuminate\\View\\{closure}(Object(Illuminate\\Foundation\\Application), Array)
+#2 /Users/mohammedhamdan/Documents/Workspace/voters-list-api/vendor/laravel/framework/src/Illuminate/Container/Container.php(795): Illuminate\\Container\\Container->build(Object(Closure))
+#3 /Users/mohammedhamdan/Documents/Workspace/voters-list-api/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(986): Illuminate\\Container\\Container->resolve('blade.compiler', Array, true)
+#4 /Users/mohammedhamdan/Documents/Workspace/voters-list-api/vendor/laravel/framework/src/Illuminate/Container/Container.php(731): Illuminate\\Foundation\\Application->resolve('blade.compiler', Array)
+#5 /Users/mohammedhamdan/Documents/Workspace/voters-list-api/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(971): Illuminate\\Container\\Container->make('blade.compiler', Array)
+#6 /Users/mohammedhamdan/Documents/Workspace/voters-list-api/vendor/laravel/framework/src/Illuminate/Foundation/helpers.php(120): Illuminate\\Foundation\\Application->make('blade.compiler', Array)
+#7 Command line code(1): app('Illuminate\\\\View...')
+#8 {main}
+  thrown at /Users/mohammedhamdan/Documents/Workspace/voters-list-api/vendor/laravel/framework/src/Illuminate/View/Compilers/Compiler.php:67)
+[stacktrace]
+#0 {main}
+"} 

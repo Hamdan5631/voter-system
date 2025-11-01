@@ -105,6 +105,180 @@
       ]
     },
     {
+      "name": "Panchayats (Superadmin Only)",
+      "item": [
+        {
+          "name": "List Panchayats",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/panchayats?per_page=15",
+              "host": ["{{base_url}}"],
+              "path": ["panchayats"],
+              "query": [
+                {
+                  "key": "per_page",
+                  "value": "15"
+                },
+                {
+                  "key": "district",
+                  "value": "Thiruvananthapuram",
+                  "disabled": true
+                },
+                {
+                  "key": "search",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Panchayat",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"New Panchayat\",\n  \"code\": \"NEW001\",\n  \"district\": \"Thiruvananthapuram\",\n  \"description\": \"New Panchayat Description\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/panchayats",
+              "host": ["{{base_url}}"],
+              "path": ["panchayats"]
+            }
+          }
+        },
+        {
+          "name": "Get Panchayat",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/panchayats/1",
+              "host": ["{{base_url}}"],
+              "path": ["panchayats", "1"]
+            }
+          }
+        },
+        {
+          "name": "Update Panchayat",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Panchayat Name\",\n  \"code\": \"UPD001\",\n  \"district\": \"Kollam\",\n  \"description\": \"Updated description\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/panchayats/1",
+              "host": ["{{base_url}}"],
+              "path": ["panchayats", "1"]
+            }
+          }
+        },
+        {
+          "name": "Delete Panchayat",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/panchayats/1",
+              "host": ["{{base_url}}"],
+              "path": ["panchayats", "1"]
+            }
+          }
+        },
+        {
+          "name": "Get Wards by Panchayat",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/panchayats/1/wards?per_page=15",
+              "host": ["{{base_url}}"],
+              "path": ["panchayats", "1", "wards"],
+              "query": [
+                {
+                  "key": "per_page",
+                  "value": "15"
+                },
+                {
+                  "key": "search",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
       "name": "Wards (Superadmin Only)",
       "item": [
         {
@@ -129,6 +303,16 @@
                 {
                   "key": "per_page",
                   "value": "15"
+                },
+                {
+                  "key": "panchayat_id",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "search",
+                  "value": "",
+                  "disabled": true
                 }
               ]
             }
@@ -154,7 +338,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Ward 3\",\n  \"ward_number\": \"WARD003\",\n  \"panchayat\": \"Panchayat C\",\n  \"description\": \"Third ward area\"\n}"
+              "raw": "{\n  \"name\": \"Ward 3\",\n  \"ward_number\": \"WARD003\",\n  \"panchayat_id\": 1,\n  \"description\": \"Third ward area\"\n}"
             },
             "url": {
               "raw": "{{base_url}}/wards",
@@ -204,7 +388,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Updated Ward 1\",\n  \"panchayat\": \"Updated Panchayat\"\n}"
+              "raw": "{\n  \"name\": \"Updated Ward 1\",\n  \"panchayat_id\": 1\n}"
             },
             "url": {
               "raw": "{{base_url}}/wards/1",

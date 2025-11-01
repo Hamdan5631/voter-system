@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Ward;
+use App\Models\Panchayat;
 use Illuminate\Http\Request;
 
 class WardController extends Controller
@@ -13,7 +14,12 @@ class WardController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Ward::query();
+        $query = Ward::query()->with('panchayat');
+
+        // Filter by panchayat
+        if ($request->has('panchayat_id')) {
+            $query->where('panchayat_id', $request->panchayat_id);
+        }
 
         // Search by name
         if ($request->has('search')) {
@@ -34,7 +40,7 @@ class WardController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'ward_number' => 'required|string|unique:wards,ward_number',
-            'panchayat' => 'required|string|max:255',
+            'panchayat_id' => 'required|exists:panchayats,id',
             'description' => 'nullable|string',
         ]);
 
@@ -42,7 +48,7 @@ class WardController extends Controller
 
         return response()->json([
             'message' => 'Ward created successfully',
-            'ward' => $ward,
+            'ward' => $ward->load('panchayat'),
         ], 201);
     }
 
@@ -51,7 +57,7 @@ class WardController extends Controller
      */
     public function show(Ward $ward)
     {
-        $ward->load(['users', 'voters']);
+        $ward->load(['users', 'voters', 'panchayat']);
 
         return response()->json($ward, 200);
     }
@@ -64,16 +70,37 @@ class WardController extends Controller
         $validated = $request->validate([
             'name' => 'sometimes|required|string|max:255',
             'ward_number' => 'sometimes|required|string|unique:wards,ward_number,' . $ward->id,
-            'panchayat' => 'sometimes|required|string|max:255',
+            'panchayat_id' => 'sometimes|required|exists:panchayats,id',
             'description' => 'nullable|string',
         ]);
 
         $ward->update($validated);
+        $ward->load('panchayat');
 
         return response()->json([
             'message' => 'Ward updated successfully',
             'ward' => $ward,
         ], 200);
+    }
+
+    /**
+     * Get wards by panchayat.
+     */
+    public function getByPanchayat(Request $request, Panchayat $panchayat)
+    {
+        $query = Ward::query()
+            ->where('panchayat_id', $panchayat->id)
+            ->with('panchayat');
+
+        // Search by name
+        if ($request->has('search')) {
+            $query->where('name', 'like', "%{$request->search}%")
+                ->orWhere('ward_number', 'like', "%{$request->search}%");
+        }
+
+        $wards = $query->latest()->paginate($request->get('per_page', 15));
+
+        return response()->json($wards, 200);
     }
 
     /**
