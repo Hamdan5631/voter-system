@@ -80,6 +80,7 @@ class VoterController extends Controller
             'ward_id' => $validated['ward_id'],
             'panchayat' => $validated['panchayat'],
             'image_path' => $imagePath,
+            'status' =>true,
         ]);
 
         $voter->load(['ward']);
