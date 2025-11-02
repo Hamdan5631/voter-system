@@ -31,13 +31,13 @@ Route::middleware('auth:sanctum')->group(function () {
     // Dashboard route (all authenticated users)
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('api.dashboard.index');
 
-    // Panchayats routes (Superadmin only)
-    Route::middleware('role:superadmin')->group(function () {
+    // Panchayats routes (Superadmin & Team Lead)
+    Route::middleware('role:superadmin|team_lead')->group(function () {
         Route::apiResource('panchayats', PanchayatController::class);
     });
 
-    // Wards routes (Superadmin only)
-    Route::middleware('role:superadmin')->group(function () {
+    // Wards routes (Superadmin & Team Lead)
+    Route::middleware('role:superadmin|team_lead')->group(function () {
         Route::apiResource('wards', WardController::class);
         Route::get('panchayats/{panchayat}/wards', [WardController::class, 'getByPanchayat'])->name('api.panchayats.wards');
     });
