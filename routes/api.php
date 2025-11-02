@@ -71,8 +71,8 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::patch('/{voter}/remark', [VoterController::class, 'updateRemark'])->name('api.voters.update-remark');
         });
 
-        // Team Lead can assign voters to workers
-        Route::middleware('role:team_lead')->group(function () {
+        // Team Lead or Superadmin can assign voters to workers
+        Route::middleware('role:team_lead|superadmin')->group(function () {
             Route::post('/bulk-assign', [VoterController::class, 'bulkAssignWorker'])->name('api.voters.bulk-assign');
             Route::post('/{voter}/assign', [VoterController::class, 'assignWorker'])->name('api.voters.assign-worker');
         });
