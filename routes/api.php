@@ -67,6 +67,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
         // Team Lead can assign voters to workers
         Route::middleware('role:team_lead')->group(function () {
+            Route::post('/bulk-assign', [VoterController::class, 'bulkAssignWorker'])->name('api.voters.bulk-assign');
             Route::post('/{voter}/assign', [VoterController::class, 'assignWorker'])->name('api.voters.assign-worker');
         });
     });

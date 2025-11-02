@@ -231,6 +231,66 @@ class VoterController extends Controller
     }
 
     /**
+     * Bulk assign multiple voters to worker (team lead only).
+     */
+    public function bulkAssignWorker(Request $request)
+    {
+        $validated = $request->validate([
+            'voter_ids' => 'required|array|min:1',
+            'voter_ids.*' => 'required|exists:voters,id',
+            'worker_id' => 'required|exists:users,id',
+        ]);
+
+        $worker = User::findOrFail($validated['worker_id']);
+
+        // Verify worker is actually a worker
+        if (!$worker->isWorker()) {
+            abort(422, 'The specified user is not a worker');
+        }
+
+        $user = $request->user();
+        $assignedVoters = [];
+        $failedVoters = [];
+
+        foreach ($validated['voter_ids'] as $voterId) {
+            $voter = Voter::findOrFail($voterId);
+
+            // Check authorization using AssignmentPolicy
+            if (!$user->can('assign', [Voter::class, $voter, $worker])) {
+                $failedVoters[] = [
+                    'voter_id' => $voterId,
+                    'reason' => 'Unauthorized to assign this voter',
+                ];
+                continue;
+            }
+
+            // Create or update assignment
+            VoterWorkerAssignment::updateOrCreate(
+                ['voter_id' => $voter->id],
+                [
+                    'worker_id' => $worker->id,
+                    'assigned_by' => $user->id,
+                ]
+            );
+
+            $voter->load(['ward', 'assignment.worker', 'assignment.teamLead']);
+            $assignedVoters[] = $voter;
+        }
+
+        return response()->json([
+            'message' => sprintf(
+                '%d voter(s) assigned successfully, %d failed',
+                count($assignedVoters),
+                count($failedVoters)
+            ),
+            'assigned_count' => count($assignedVoters),
+            'failed_count' => count($failedVoters),
+            'assigned_voters' => $assignedVoters,
+            'failed_voters' => $failedVoters,
+        ], count($failedVoters) === 0 ? 200 : 207); // 207 Multi-Status if some failed
+    }
+
+    /**
      * Get the storage disk for voter images.
      */
     private function getImageDisk(): string
