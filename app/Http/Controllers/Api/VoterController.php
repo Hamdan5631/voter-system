@@ -281,7 +281,7 @@ class VoterController extends Controller
             ['voter_id' => $voter->id],
             [
                 'worker_id' => $worker->id,
-                'assigned_by' => $request->user()->id,
+                'assigned_by' => $request->user()->id, 
             ]
         );
 
