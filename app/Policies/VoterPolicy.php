@@ -63,17 +63,23 @@ class VoterPolicy
     }
 
     /**
-     * Determine if the user can update the voter status (voted/unvoted).
+     * Determine if the user can update the voter status (not_voted, voted, visited).
      */
     public function updateStatus(User $user, Voter $voter): bool
     {
-        // Superadmin, Team Lead, and Booth Agent can update status
+        // Superadmin can update any status
         if ($user->isSuperadmin()) {
             return true;
         }
 
+        // Team Lead and Booth Agent can update status for voters in their ward
         if (($user->isTeamLead() || $user->isBoothAgent()) && $user->ward_id === $voter->ward_id) {
             return true;
+        }
+
+        // Workers can update status to 'visited' for assigned voters only
+        if ($user->isWorker()) {
+            return $user->assignedVoters()->where('voters.id', $voter->id)->exists();
         }
 
         return false;

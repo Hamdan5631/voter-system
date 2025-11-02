@@ -20,7 +20,6 @@ class Voter extends Model
         'ward_id',
         'panchayat',
         'image_path',
-        'status',
     ];
 
     /**
@@ -29,7 +28,7 @@ class Voter extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'status' => 'boolean',
+        // Status is now stored in voter_statuses table
     ];
 
     /**
@@ -39,6 +38,8 @@ class Voter extends Model
      */
     protected $appends = [
         'image_url',
+        'status',
+        'status_updated_by',
     ];
 
     /**
@@ -68,6 +69,31 @@ class Voter extends Model
     }
 
     /**
+     * Get all status history for this voter.
+     */
+    public function voterStatuses()
+    {
+        return $this->hasMany(VoterStatus::class)->orderBy('created_at', 'desc');
+    }
+
+    /**
+     * Get the latest status record for this voter.
+     */
+    public function latestStatus()
+    {
+        return $this->hasOne(VoterStatus::class)->latestOfMany();
+    }
+
+    /**
+     * Get status updater through latest status relationship.
+     */
+    public function getStatusUpdaterUser()
+    {
+        $latestStatus = $this->latestStatus;
+        return $latestStatus ? $latestStatus->user : null;
+    }
+
+    /**
      * Scope to filter by ward.
      */
     public function scopeInWard($query, $wardId)
@@ -76,11 +102,48 @@ class Voter extends Model
     }
 
     /**
-     * Scope to filter by status (voted/unvoted).
+     * Scope to filter by status (not_voted, voted, visited).
      */
     public function scopeStatus($query, $status)
     {
-        return $query->where('status', $status);
+        return $query->whereHas('latestStatus', function ($q) use ($status) {
+            $q->where('status', $status);
+        });
+    }
+
+    /**
+     * Get the current status attribute (from latest voter_statuses record).
+     */
+    public function getStatusAttribute()
+    {
+        $latestStatus = $this->latestStatus;
+        return $latestStatus ? $latestStatus->status : 'not_voted';
+    }
+
+    /**
+     * Get the status_updated_by attribute (user who last updated status).
+     */
+    public function getStatusUpdatedByAttribute()
+    {
+        $latestStatus = $this->latestStatus;
+        return $latestStatus ? $latestStatus->user_id : null;
+    }
+
+    /**
+     * Get status updater relationship (returns user from latest status).
+     */
+    public function statusUpdater()
+    {
+        $latestStatus = $this->latestStatus;
+        return $latestStatus ? $latestStatus->user : null;
+    }
+
+    /**
+     * Get valid status values.
+     */
+    public static function getValidStatuses(): array
+    {
+        return ['not_voted', 'voted', 'visited'];
     }
 
     /**

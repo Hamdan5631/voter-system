@@ -50,6 +50,8 @@ Route::middleware('auth:sanctum')->group(function () {
     // Voters routes
     Route::prefix('voters')->group(function () {
         Route::get('/', [VoterController::class, 'index'])->name('api.voters.index');
+        Route::get('/find-by-serial', [VoterController::class, 'findBySerialNumber'])->name('api.voters.find-by-serial');
+        Route::get('/unassigned', [VoterController::class, 'getUnassignedVoters'])->name('api.voters.unassigned');
         Route::get('/{voter}', [VoterController::class, 'show'])->name('api.voters.show');
         
         // Superadmin only
@@ -59,8 +61,8 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::delete('/{voter}', [VoterController::class, 'destroy'])->name('api.voters.destroy');
         });
 
-        // Team Lead and Booth Agent can update status
-        Route::middleware('role:team_lead|booth_agent|superadmin')->group(function () {
+        // Team Lead, Booth Agent, Superadmin, and Workers can update status
+        Route::middleware('role:team_lead|booth_agent|superadmin|worker')->group(function () {
             Route::patch('/{voter}/status', [VoterController::class, 'updateStatus'])->name('api.voters.update-status');
         });
 

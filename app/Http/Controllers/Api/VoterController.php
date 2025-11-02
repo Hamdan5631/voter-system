@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Voter;
+use App\Models\VoterStatus;
 use App\Models\VoterWorkerAssignment;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -17,7 +18,7 @@ class VoterController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
-        $query = Voter::query()->with(['ward', 'assignment.worker']);
+        $query = Voter::query()->with(['ward', 'assignment.worker', 'latestStatus.user']);
 
         // Superadmin can see all voters
         if (!$user->isSuperadmin()) {
@@ -47,7 +48,7 @@ class VoterController extends Controller
         }
 
         if ($request->has('status')) {
-            $query->status($request->boolean('status'));
+            $query->status($request->status);
         }
 
         $voters = $query->latest()->paginate($request->get('per_page', 15));
@@ -80,15 +81,62 @@ class VoterController extends Controller
             'ward_id' => $validated['ward_id'],
             'panchayat' => $validated['panchayat'],
             'image_path' => $imagePath,
-            'status' =>true,
         ]);
 
-        $voter->load(['ward']);
+        // Create initial status record
+        VoterStatus::create([
+            'voter_id' => $voter->id,
+            'user_id' => $request->user()->id,
+            'status' => 'not_voted',
+        ]);
+
+        $voter->load(['ward', 'latestStatus.user']);
 
         return response()->json([
             'message' => 'Voter created successfully',
             'voter' => $voter,
         ], 201);
+    }
+
+    /**
+     * Find voter by serial number.
+     */
+    public function findBySerialNumber(Request $request)
+    {
+        $validated = $request->validate([
+            'serial_number' => 'required|string',
+        ]);
+
+        $user = $request->user();
+        $query = Voter::query()->with(['ward', 'assignment.worker', 'assignment.teamLead', 'latestStatus.user']);
+
+        // Superadmin can see all voters
+        if (!$user->isSuperadmin()) {
+            // Team Lead and Booth Agent can see voters in their ward
+            if ($user->isTeamLead() || $user->isBoothAgent()) {
+                $query->where('ward_id', $user->ward_id);
+            }
+            // Worker can only see assigned voters
+            elseif ($user->isWorker()) {
+                $query->whereHas('worker', function ($q) use ($user) {
+                    $q->where('users.id', $user->id);
+                });
+            }
+        }
+
+        // Find by exact serial number
+        $voter = $query->where('serial_number', $validated['serial_number'])->first();
+
+        if (!$voter) {
+            return response()->json([
+                'message' => 'Voter not found',
+            ], 404);
+        }
+
+        // Check authorization
+        $this->authorize('view', $voter);
+
+        return response()->json($voter, 200);
     }
 
     /**
@@ -98,7 +146,7 @@ class VoterController extends Controller
     {
         $this->authorize('view', $voter);
 
-        $voter->load(['ward', 'assignment.worker', 'assignment.teamLead']);
+        $voter->load(['ward', 'assignment.worker', 'assignment.teamLead', 'latestStatus.user']);
 
         return response()->json($voter, 200);
     }
@@ -128,7 +176,7 @@ class VoterController extends Controller
 
         $voter->update($validated);
 
-        $voter->load(['ward']);
+        $voter->load(['ward', 'latestStatus.user']);
 
         return response()->json([
             'message' => 'Voter updated successfully',
@@ -156,21 +204,36 @@ class VoterController extends Controller
     }
 
     /**
-     * Update voter status (voted/unvoted).
+     * Update voter status (not_voted, voted, visited).
      */
     public function updateStatus(Request $request, Voter $voter)
     {
+        $user = $request->user();
+        
+        // Check authorization - workers can only set to 'visited'
+        if ($user->isWorker() && $request->status !== 'visited') {
+            abort(403, 'Workers can only change status to "visited"');
+        }
+        
         $this->authorize('updateStatus', $voter);
 
         $validated = $request->validate([
-            'status' => 'required|boolean',
+            'status' => 'required|string|in:not_voted,voted,visited',
         ]);
 
-        $voter->update(['status' => $validated['status']]);
+        // Create new status record in voter_statuses table
+        VoterStatus::create([
+            'voter_id' => $voter->id,
+            'user_id' => $user->id,
+            'status' => $validated['status'],
+        ]);
+
+        // Reload voter with latest status
+        $voter->load(['ward', 'latestStatus.user']);
 
         return response()->json([
             'message' => 'Voter status updated successfully',
-            'voter' => $voter->load(['ward']),
+            'voter' => $voter,
         ], 200);
     }
 
@@ -193,7 +256,7 @@ class VoterController extends Controller
 
         return response()->json([
             'message' => 'Remark updated successfully',
-            'voter' => $voter->load(['ward', 'assignment.worker']),
+            'voter' => $voter->load(['ward', 'assignment.worker', 'latestStatus.user']),
         ], 200);
     }
 
@@ -222,12 +285,56 @@ class VoterController extends Controller
             ]
         );
 
-        $voter->load(['ward', 'assignment.worker', 'assignment.teamLead']);
+        $voter->load(['ward', 'assignment.worker', 'assignment.teamLead', 'latestStatus.user']);
 
         return response()->json([
             'message' => 'Voter assigned to worker successfully',
             'voter' => $voter,
         ], 200);
+    }
+
+    /**
+     * Get unassigned voters (voters not assigned to any worker).
+     */
+    public function getUnassignedVoters(Request $request)
+    {
+        $user = $request->user();
+        $query = Voter::query()->with(['ward', 'latestStatus.user'])
+            ->whereDoesntHave('assignment');
+
+        // Superadmin can see all unassigned voters
+        if (!$user->isSuperadmin()) {
+            // Team Lead and Booth Agent can see unassigned voters in their ward
+            if ($user->isTeamLead() || $user->isBoothAgent()) {
+                $query->where('ward_id', $user->ward_id);
+            }
+            // Workers cannot see unassigned voters list
+            elseif ($user->isWorker()) {
+                abort(403, 'Workers cannot view unassigned voters');
+            }
+        }
+
+        // Filter by ward_id if provided
+        if ($request->has('ward_id')) {
+            $query->where('ward_id', $request->ward_id);
+        }
+
+        // Additional filters
+        if ($request->has('serial_number')) {
+            $query->searchSerialNumber($request->serial_number);
+        }
+
+        if ($request->has('panchayat')) {
+            $query->panchayat($request->panchayat);
+        }
+
+        if ($request->has('status')) {
+            $query->status($request->status);
+        }
+
+        $voters = $query->latest()->paginate($request->get('per_page', 15));
+
+        return response()->json($voters, 200);
     }
 
     /**
@@ -273,7 +380,7 @@ class VoterController extends Controller
                 ]
             );
 
-            $voter->load(['ward', 'assignment.worker', 'assignment.teamLead']);
+            $voter->load(['ward', 'assignment.worker', 'assignment.teamLead', 'latestStatus.user']);
             $assignedVoters[] = $voter;
         }
 

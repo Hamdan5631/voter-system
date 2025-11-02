@@ -606,7 +606,8 @@
                 },
                 {
                   "key": "status",
-                  "value": "false"
+                  "value": "not_voted",
+                  "description": "Filter by status: not_voted, voted, or visited"
                 },
                 {
                   "key": "per_page",
@@ -614,6 +615,88 @@
                 }
               ]
             }
+          }
+        },
+        {
+          "name": "Find Voter by Serial Number",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/voters/find-by-serial?serial_number=VOTER001",
+              "host": ["{{base_url}}"],
+              "path": ["voters", "find-by-serial"],
+              "query": [
+                {
+                  "key": "serial_number",
+                  "value": "VOTER001",
+                  "description": "The exact serial number of the voter"
+                }
+              ]
+            },
+            "description": "Find a voter by exact serial number. Access control applies based on user role."
+          }
+        },
+        {
+          "name": "Get Unassigned Voters",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/voters/unassigned?ward_id=1&per_page=15",
+              "host": ["{{base_url}}"],
+              "path": ["voters", "unassigned"],
+              "query": [
+                {
+                  "key": "ward_id",
+                  "value": "1",
+                  "description": "Filter by ward ID (optional). If provided, shows unassigned voters in that ward. If not provided, shows all unassigned voters.",
+                  "disabled": false
+                },
+                {
+                  "key": "serial_number",
+                  "value": "",
+                  "description": "Search by serial number (optional)",
+                  "disabled": true
+                },
+                {
+                  "key": "panchayat",
+                  "value": "",
+                  "description": "Filter by panchayat (optional)",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "",
+                  "description": "Filter by status: not_voted, voted, or visited (optional)",
+                  "disabled": true
+                },
+                {
+                  "key": "per_page",
+                  "value": "15",
+                  "description": "Number of results per page"
+                }
+              ]
+            },
+            "description": "Get voters that are not assigned to any worker. If ward_id is provided, shows unassigned voters in that ward. If no ward_id is provided, shows all unassigned voters. Superadmin can see all, Team Lead/Booth Agent see only their ward. Workers cannot access this endpoint."
           }
         },
         {
@@ -760,8 +843,14 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"status\": true\n}"
+              "raw": "{\n  \"status\": \"visited\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
+            "description": "Update voter status. Valid values: 'not_voted', 'voted', 'visited'. Workers can only set status to 'visited'. The status_updated_by field will be automatically set to the authenticated user.",
             "url": {
               "raw": "{{base_url}}/voters/1/status",
               "host": ["{{base_url}}"],
