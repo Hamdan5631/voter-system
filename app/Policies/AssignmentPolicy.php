@@ -12,6 +12,11 @@ class AssignmentPolicy
      */
     public function assign(User $user, Voter $voter, User $worker): bool
     {
+        // Superadmin can assign any voter to any worker
+        if ($user->isSuperadmin()) {
+            return true;
+        }
+
         // Only team lead of the ward can assign voters to workers
         if (!$user->isTeamLead()) {
             return false;
