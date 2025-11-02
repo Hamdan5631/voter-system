@@ -17,7 +17,8 @@ return new class extends Migration
             $table->foreignId('ward_id')->constrained('wards')->onDelete('cascade');
             $table->string('panchayat');
             $table->string('image_path')->nullable();
-            $table->boolean('status')->default(false); // voted/unvoted            $table->timestamps();
+            $table->boolean('status')->default(false); // voted/unvoted
+            $table->timestamps();
         });
     }
 
