@@ -8,7 +8,6 @@ use App\Models\VoterWorkerAssignment;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Intervention\Image\Facades\Image;
 
 class VoterController extends Controller
 {
@@ -300,32 +299,18 @@ class VoterController extends Controller
     }
 
     /**
-     * Upload and resize image.
+     * Upload image.
      */
     private function uploadImage($file)
     {
         $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
         $path = 'voters/' . $filename;
 
-        // Resize image
-        $image = Image::make($file);
-        $image->resize(800, 800, function ($constraint) {
-            $constraint->aspectRatio();
-            $constraint->upsize();
-        });
-
         // Get storage disk
         $disk = $this->getImageDisk();
         
-        // Encode image based on original extension
-        $encoded = match(strtolower($file->getClientOriginalExtension())) {
-            'jpg', 'jpeg' => $image->encode('jpg', 85),
-            'png' => $image->encode('png'),
-            default => $image->encode('jpg', 85),
-        };
-
-        // Save to storage (S3 or local)
-        Storage::disk($disk)->put($path, (string) $encoded, 'public');
+        // Save file to storage (S3 or local) using our specific filename
+        Storage::disk($disk)->put($path, file_get_contents($file->getRealPath()), 'public');
 
         return $path;
     }

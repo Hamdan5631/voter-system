@@ -82,6 +82,28 @@
           }
         },
         {
+          "name": "Get Dashboard",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/dashboard",
+              "host": ["{{base_url}}"],
+              "path": ["dashboard"]
+            },
+            "description": "Get dashboard statistics. Superadmin sees all data, Team Lead/Booth Agent see data for their ward, Worker sees data for assigned voters."
+          }
+        },
+        {
           "name": "Logout",
           "request": {
             "method": "POST",
