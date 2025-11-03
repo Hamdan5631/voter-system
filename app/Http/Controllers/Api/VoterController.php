@@ -382,20 +382,14 @@ class VoterController extends Controller
             $query->where('ward_id', $request->ward_id);
         }
 
-        // Additional filters
-        if ($request->has('serial_number')) {
-            $query->searchSerialNumber($request->serial_number);
-        }
-
-        if ($request->has('panchayat')) {
-            $query->panchayat($request->panchayat);
-        }
-
-        if ($request->has('status')) {
-            $query->status($request->status);
-        }
-
         $voters = $query->latest()->paginate($request->get('per_page', 15));
+
+        // If no assigned voters found, return a custom 404 not found response
+        if ($voters->isEmpty()) {
+            return response()->json([
+                'message' => 'No assigned voters found'
+            ], 404);
+        }
 
         return response()->json($voters, 200);
     }
