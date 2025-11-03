@@ -77,7 +77,7 @@ class User extends Authenticatable
      */
     public function isSuperadmin(): bool
     {
-        return $this->role === 'superadmin';
+        return $this->hasRole('superadmin');
     }
 
     /**
@@ -85,7 +85,7 @@ class User extends Authenticatable
      */
     public function isTeamLead(): bool
     {
-        return $this->role === 'team_lead';
+        return $this->hasRole('team_lead');
     }
 
     /**
@@ -93,7 +93,7 @@ class User extends Authenticatable
      */
     public function isBoothAgent(): bool
     {
-        return $this->role === 'booth_agent';
+        return $this->hasRole('booth_agent');
     }
 
     /**
@@ -101,6 +101,6 @@ class User extends Authenticatable
      */
     public function isWorker(): bool
     {
-        return $this->role === 'worker';
+        return $this->hasRole('worker');
     }
 }
