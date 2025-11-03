@@ -362,6 +362,7 @@ class VoterController extends Controller
         $user = $request->user();
         $query = Voter::query()
             ->join('voter_worker_assignments', 'voters.id', '=', 'voter_worker_assignments.voter_id')
+            ->select('voters.*')
             ->with(['ward', 'assignment.worker', 'latestStatus.user']);
 
         // Superadmin can see all assigned voters
