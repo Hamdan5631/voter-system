@@ -700,6 +700,59 @@
           }
         },
         {
+          "name": "Get Assigned Voters",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/voters/assigned?ward_id=1&per_page=15",
+              "host": ["{{base_url}}"],
+              "path": ["voters", "assigned"],
+              "query": [
+                {
+                  "key": "ward_id",
+                  "value": "1",
+                  "description": "Filter by ward ID (optional). If provided, shows assigned voters in that ward. If not provided, shows all assigned voters.",
+                  "disabled": false
+                },
+                {
+                  "key": "serial_number",
+                  "value": "",
+                  "description": "Search by serial number (optional)",
+                  "disabled": true
+                },
+                {
+                  "key": "panchayat",
+                  "value": "",
+                  "description": "Filter by panchayat (optional)",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "",
+                  "description": "Filter by status: not_voted, voted, or visited (optional)",
+                  "disabled": true
+                },
+                {
+                  "key": "per_page",
+                  "value": "15",
+                  "description": "Number of results per page"
+                }
+              ]
+            },
+            "description": "Get voters that are assigned to any worker. If ward_id is provided, shows assigned voters in that ward. If no ward_id is provided, shows all assigned voters. Superadmin can see all, Team Lead/Booth Agent see only their ward. Workers cannot access this endpoint."
+          }
+        },
+        {
           "name": "Create Voter",
           "request": {
             "method": "POST",
@@ -938,6 +991,27 @@
               "mode": "raw",
               "raw": "{\n  \"worker_id\": 5\n}"
             },
+            "url": {
+              "raw": "{{base_url}}/voters/1/assign",
+              "host": ["{{base_url}}"],
+              "path": ["voters", "1", "assign"]
+            }
+          }
+        },
+        {
+          "name": "Unassign Voter from Worker",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
             "url": {
               "raw": "{{base_url}}/voters/1/assign",
               "host": ["{{base_url}}"],

@@ -97,4 +97,50 @@ class VoterPolicy
 
         return false;
     }
+
+    /**
+     * Determine if the user can assign voters to workers.
+     */
+    public function assign(User $user, Voter $voter, User $worker): bool
+    {
+        // Superadmin can assign any voter to any worker
+        if ($user->isSuperadmin()) {
+            return true;
+        }
+
+        // Only team lead of the ward can assign voters to workers
+        if (!$user->isTeamLead()) {
+            return false;
+        }
+
+        // Voter must be in the same ward as team lead
+        if ($user->ward_id !== $voter->ward_id) {
+            return false;
+        }
+
+        // Worker must be in the same ward
+        if ($user->ward_id !== $worker->ward_id || !$worker->isWorker()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Determine if the user can unassign a voter from a worker.
+     */
+    public function unassign(User $user, Voter $voter): bool
+    {
+        // Superadmin can unassign any voter
+        if ($user->isSuperadmin()) {
+            return true;
+        }
+
+        // Team lead can unassign voters in their ward
+        if ($user->isTeamLead() && $user->ward_id === $voter->ward_id) {
+            return true;
+        }
+
+        return false;
+    }
 }

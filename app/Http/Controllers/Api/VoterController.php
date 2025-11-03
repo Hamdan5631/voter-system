@@ -294,6 +294,23 @@ class VoterController extends Controller
     }
 
     /**
+     * Unassign voter from a worker.
+     */
+    public function unassignWorker(Request $request, Voter $voter)
+    {
+        $this->authorize('unassign', $voter);
+
+        $assignment = VoterWorkerAssignment::where('voter_id', $voter->id)->first();
+
+        if ($assignment) {
+            $assignment->delete();
+            return response()->json(['message' => 'Voter unassigned successfully'], 200);
+        }
+
+        return response()->json(['message' => 'Voter is not assigned'], 404);
+    }
+
+    /**
      * Get unassigned voters (voters not assigned to any worker).
      */
     public function getUnassignedVoters(Request $request)

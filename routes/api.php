@@ -76,6 +76,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::middleware('role:team_lead|superadmin')->group(function () {
             Route::post('/bulk-assign', [VoterController::class, 'bulkAssignWorker'])->name('api.voters.bulk-assign');
             Route::post('/{voter}/assign', [VoterController::class, 'assignWorker'])->name('api.voters.assign-worker');
+            Route::delete('/{voter}/assign', [VoterController::class, 'unassignWorker'])->name('api.voters.unassign-worker');
         });
     });
 });
