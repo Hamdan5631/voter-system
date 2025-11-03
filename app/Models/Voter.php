@@ -40,6 +40,7 @@ class Voter extends Model
         'image_url',
         'status',
         'status_updated_by',
+        'status_history',
     ];
 
     /**
@@ -178,5 +179,13 @@ class Voter extends Model
         } else {
             return Storage::disk('public')->url($this->image_path);
         }
+    }
+
+    /**
+     * Get the status history for the voter.
+     */
+    public function getStatusHistoryAttribute()
+    {
+        return $this->voterStatuses()->with('user:id,name')->get();
     }
 }
