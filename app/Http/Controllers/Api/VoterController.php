@@ -338,6 +338,50 @@ class VoterController extends Controller
     }
 
     /**
+     * Get assigned voters (voters assigned to any worker).
+     */
+    public function getAssignedVoters(Request $request)
+    {
+        $user = $request->user();
+        $query = Voter::query()->with(['ward', 'assignment.worker', 'latestStatus.user'])
+            ->whereHas('assignment');
+
+        // Superadmin can see all assigned voters
+        if (!$user->isSuperadmin()) {
+            // Team Lead and Booth Agent can see assigned voters in their ward
+            if ($user->isTeamLead() || $user->isBoothAgent()) {
+                $query->where('ward_id', $user->ward_id);
+            }
+            // Workers cannot see assigned voters list
+            elseif ($user->isWorker()) {
+                abort(403, 'Workers cannot view all assigned voters');
+            }
+        }
+
+        // Filter by ward_id if provided
+        if ($request->has('ward_id')) {
+            $query->where('ward_id', $request->ward_id);
+        }
+
+        // Additional filters
+        if ($request->has('serial_number')) {
+            $query->searchSerialNumber($request->serial_number);
+        }
+
+        if ($request->has('panchayat')) {
+            $query->panchayat($request->panchayat);
+        }
+
+        if ($request->has('status')) {
+            $query->status($request->status);
+        }
+
+        $voters = $query->latest()->paginate($request->get('per_page', 15));
+
+        return response()->json($voters, 200);
+    }
+
+    /**
      * Bulk assign multiple voters to worker (team lead only).
      */
     public function bulkAssignWorker(Request $request)
