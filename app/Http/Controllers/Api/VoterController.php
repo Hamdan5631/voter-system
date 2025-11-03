@@ -360,8 +360,9 @@ class VoterController extends Controller
     public function getAssignedVoters(Request $request)
     {
         $user = $request->user();
-        $query = Voter::query()->with(['ward', 'assignment.worker', 'latestStatus.user'])
-            ->whereHas('assignment');
+        $query = Voter::query()
+            ->join('voter_worker_assignments', 'voters.id', '=', 'voter_worker_assignments.voter_id')
+            ->with(['ward', 'assignment.worker', 'latestStatus.user']);
 
         // Superadmin can see all assigned voters
         if (!$user->isSuperadmin()) {
