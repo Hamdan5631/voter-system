@@ -357,9 +357,8 @@ class VoterController extends Controller
     /**
      * Get assigned voters (voters assigned to any worker).
      */
-    public function getAssignedVoters(Request $request)
+    public function getVotersAssignedToWorker(Request $request)
     {
-        dd($request->all());
         $user = $request->user();
         $query = Voter::query()
             ->join('voter_worker_assignments', 'voters.id', '=', 'voter_worker_assignments.voter_id')
