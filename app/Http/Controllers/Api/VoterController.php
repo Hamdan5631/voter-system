@@ -364,7 +364,7 @@ class VoterController extends Controller
             ->join('voter_worker_assignments', 'voters.id', '=', 'voter_worker_assignments.voter_id')
             ->select('voters.*')
             ->with(['ward', 'assignment.worker', 'latestStatus.user']);
-dd($query->get());
+
         // Superadmin can see all assigned voters
         if (!$user->isSuperadmin()) {
             // Team Lead and Booth Agent can see assigned voters in their ward
