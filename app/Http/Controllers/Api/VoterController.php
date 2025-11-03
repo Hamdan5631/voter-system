@@ -362,14 +362,14 @@ class VoterController extends Controller
         $user = $request->user();
         $query = Voter::query()
             ->join('voter_worker_assignments', 'voters.id', '=', 'voter_worker_assignments.voter_id')
-            ->select('voters.*')
+            ->select('voters.*', 'voter_worker_assignments.worker_id as assigned_worker_id')
             ->with(['ward', 'assignment.worker', 'latestStatus.user']);
 
         // Superadmin can see all assigned voters
         if (!$user->isSuperadmin()) {
             // Team Lead and Booth Agent can see assigned voters in their ward
             if ($user->isTeamLead() || $user->isBoothAgent()) {
-                $query->where('voters.ward_id', $user->ward_id);
+                $query->where('ward_id', $user->ward_id);
             }
             // Workers cannot see assigned voters list
             elseif ($user->isWorker()) {
@@ -377,30 +377,12 @@ class VoterController extends Controller
             }
         }
 
-        // Filter by worker_id if provided
+        // Filter by ward_id if provided
         if ($request->has('worker_id')) {
             $query->where('voter_worker_assignments.worker_id', $request->worker_id);
         }
 
-        // Filter by ward_id if provided
-        if ($request->has('ward_id')) {
-            $query->where('voters.ward_id', $request->ward_id);
-        }
-
-        // Additional filters
-        if ($request->has('serial_number')) {
-            $query->searchSerialNumber($request->serial_number);
-        }
-
-        if ($request->has('panchayat')) {
-            $query->panchayat($request->panchayat);
-        }
-
-        if ($request->has('status')) {
-            $query->status($request->status);
-        }
-
-        $voters = $query->latest('voters.created_at')->paginate($request->get('per_page', 15));
+        $voters = $query->latest()->paginate($request->get('per_page', 15));
 
         // If no assigned voters found, return a custom 404 not found response
         if ($voters->isEmpty()) {
