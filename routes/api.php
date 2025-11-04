@@ -53,7 +53,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/assigned', [VoterController::class, 'getAssignedVoters'])->name('api.voters.assigned');
         Route::get('/', [VoterController::class, 'index'])->name('api.voters.index');
         Route::get('/find-by-serial', [VoterController::class, 'findBySerialNumber'])->name('api.voters.find-by-serial');
-        // Route::get('/{voter}', [VoterController::class, 'show'])->name('api.voters.show');
+        Route::get('/{voter}', [VoterController::class, 'show'])->name('api.voters.show');
         
         // Superadmin only
         Route::middleware('role:superadmin')->group(function () {
