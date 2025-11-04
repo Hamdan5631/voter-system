@@ -491,4 +491,5 @@ class VoterController extends Controller
             Storage::disk($disk)->delete($path);
         }
     }
+
 }

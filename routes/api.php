@@ -52,10 +52,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/', [VoterController::class, 'index'])->name('api.voters.index');
         Route::get('/find-by-serial', [VoterController::class, 'findBySerialNumber'])->name('api.voters.find-by-serial');
         Route::get('/unassigned', [VoterController::class, 'getUnassignedVoters'])->name('api.voters.unassigned');
-        // Route::get('/assigned', [VoterController::class, 'getAssignedVoters'])->name('api.voters.assigned');
+        Route::get('/woker-assigned', [VoterController::class, 'getAssignedVoters'])->name('api.voters.assigned');
         Route::get('/{voter}', [VoterController::class, 'show'])->name('api.voters.show');
-        Route::get('/worker-assigned', [VoterController::class, 'getAssignedVoters'])->name('api.voters.assigned');
-
+        
         // Superadmin only
         Route::middleware('role:superadmin')->group(function () {
             Route::post('/', [VoterController::class, 'store'])->name('api.voters.store');
