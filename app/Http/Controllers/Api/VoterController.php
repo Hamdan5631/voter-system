@@ -144,6 +144,7 @@ class VoterController extends Controller
      */
     public function show(Request $request, Voter $voter)
     {
+        $user = $request->user();
         $this->authorize('view', $voter);
 
         $voter->load(['ward', 'assignment.worker', 'assignment.teamLead', 'latestStatus.user']);
