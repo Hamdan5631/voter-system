@@ -46,14 +46,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::middleware('role:superadmin')->group(function () {
         Route::apiResource('users', UserController::class);
     });
+    Route::get('/assigned', [VoterController::class, 'getAssignedVoters'])->name('api.voters.assigned');
 
     // Voters routes
     Route::prefix('voters')->group(function () {
         Route::get('/unassigned', [VoterController::class, 'getUnassignedVoters'])->name('api.voters.unassigned');
-        Route::get('/assigned', [VoterController::class, 'getAssignedVoters'])->name('api.voters.assigned');
         Route::get('/', [VoterController::class, 'index'])->name('api.voters.index');
         Route::get('/find-by-serial', [VoterController::class, 'findBySerialNumber'])->name('api.voters.find-by-serial');
-        Route::get('/{voter}', [VoterController::class, 'show'])->name('api.voters.show')->whereNumber('voter');
+        Route::get('/{voter}', [VoterController::class, 'show'])->name('api.voters.show');
         
         // Superadmin only
         Route::middleware('role:superadmin')->group(function () {
