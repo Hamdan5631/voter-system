@@ -491,22 +491,4 @@ class VoterController extends Controller
             Storage::disk($disk)->delete($path);
         }
     }
-
-    /**
-     * Get image URL.
-     */
-    private function getImageUrl($path)
-    {
-        if (empty($path)) {
-            return null;
-        }
-
-        $disk = $this->getImageDisk();
-        
-        if ($disk === 's3') {
-            return Storage::disk('s3')->url($path);
-        } else {
-            return Storage::disk('public')->url($path);
-        }
-    }
 }
