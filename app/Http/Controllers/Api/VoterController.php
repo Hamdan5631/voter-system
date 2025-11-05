@@ -218,7 +218,7 @@ class VoterController extends Controller
         $this->authorize('updateStatus', $voter);
 
         $validated = $request->validate([
-            'status' => 'required|string|in:not_voted,voted,visited',
+            'status' => 'required|string|in:not_voted,voted,visited,not_visited',
         ]);
 
         // Create new status record in voter_statuses table
