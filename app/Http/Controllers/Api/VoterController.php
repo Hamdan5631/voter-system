@@ -371,9 +371,9 @@ class VoterController extends Controller
             if ($user->isTeamLead() || $user->isBoothAgent()) {
                 $query->where('ward_id', $user->ward_id);
             }
-            // Workers cannot see assigned voters list
+            // Workers can only see their own assigned voters
             elseif ($user->isWorker()) {
-                abort(403, 'Workers cannot view all assigned voters');
+                $query->where('voter_worker_assignments.worker_id', $user->id);
             }
         }
 
