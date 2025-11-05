@@ -18,10 +18,21 @@ class OverviewController extends Controller
 
         // Filter by role
         if ($user->isSuperadmin()) {
-            // Superadmin sees all data - no filter needed
+            if ($request->has('ward_id')) {
+                $query->where('ward_id', $request->ward_id);
+            }
+            if ($request->has('worker_id')) {
+                $query->whereHas('assignment', function ($q) use ($request) {
+                    $q->where('worker_id', $request->worker_id);
+                });
+            }
         } elseif ($user->isTeamLead()) {
-            // Team Lead sees data for their ward only
             $query->where('ward_id', $user->ward_id);
+            if ($request->has('worker_id')) {
+                $query->whereHas('assignment', function ($q) use ($request) {
+                    $q->where('worker_id', $request->worker_id);
+                });
+            }
         } elseif ($user->isBoothAgent()) {
             // Booth Agent sees data for their ward only
             $query->where('ward_id', $user->ward_id);

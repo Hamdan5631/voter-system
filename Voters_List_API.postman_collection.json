@@ -96,11 +96,25 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/dashboard",
+              "raw": "{{base_url}}/dashboard?ward_id=1&worker_id=5",
               "host": ["{{base_url}}"],
-              "path": ["dashboard"]
+              "path": ["dashboard"],
+              "query": [
+                {
+                  "key": "ward_id",
+                  "value": "1",
+                  "description": "(Optional) Filter by ward ID. Only available for superadmins.",
+                  "disabled": true
+                },
+                {
+                  "key": "worker_id",
+                  "value": "5",
+                  "description": "(Optional) Filter by worker ID. Available for superadmins and team leads.",
+                  "disabled": true
+                }
+              ]
             },
-            "description": "Get dashboard statistics. Superadmin sees all data, Team Lead/Booth Agent see data for their ward, Worker sees data for assigned voters."
+            "description": "Get dashboard statistics. Superadmin sees all data, Team Lead/Booth Agent see data for their ward, Worker sees data for assigned voters. Superadmins can filter by ward_id and worker_id. Team Leads can filter by worker_id."
           },
           "response": [
             {
