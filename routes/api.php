@@ -5,7 +5,7 @@ use App\Http\Controllers\Api\VoterController;
 use App\Http\Controllers\Api\WardController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\PanchayatController;
-use App\Http\Controllers\Api\DashboardController;
+use App\Http\Controllers\Api\OverviewController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -28,8 +28,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/auth/logout', [AuthController::class, 'logout'])->name('api.auth.logout');
     Route::get('/auth/user', [AuthController::class, 'user'])->name('api.auth.user');
 
-    // Dashboard route (all authenticated users)
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('api.dashboard.index');
+    // Overview route (all authenticated users)
+    Route::get('/overview', [OverviewController::class, 'overview'])->name('api.overview');
 
     // Panchayats routes (Superadmin & Team Lead)
     Route::middleware('role:superadmin|team_lead')->group(function () {
