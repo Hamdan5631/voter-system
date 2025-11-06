@@ -19,7 +19,7 @@ class VoterController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
-        $query = Voter::query()->with(['ward', 'assignment.worker', 'latestStatus.user']);
+        $query = Voter::query()->with(['ward', 'assignment.worker', 'latestStatus.user','panchayat']);
 
         // Superadmin can see all voters
         if (!$user->isSuperadmin()) {
@@ -85,7 +85,7 @@ class VoterController extends Controller
 
         $panchayat = Panchayat::find($validated['panchayat_id']);
         $panchayat_name = $panchayat->name;
-        
+
         $voter = Voter::create([
             'serial_number' => $validated['serial_number'],
             'ward_id' => $validated['ward_id'],
