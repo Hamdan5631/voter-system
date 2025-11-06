@@ -70,42 +70,46 @@ class VoterController extends Controller
         $this->authorize('create', Voter::class);
 
         $validated = $request->validate([
-            'serial_number' => 'required|string|unique:voters,serial_number',
             'ward_id' => 'required|exists:wards,id',
-            'panchayat' => 'nullable|string|max:255',
             'panchayat_id' => 'required|exists:panchayats,id',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'voters' => 'required|array',
+            'voters.*.serial_number' => 'required|string|unique:voters,serial_number',
+            'voters.*.image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
-
-        // Handle image upload
-        $imagePath = null;
-        if ($request->hasFile('image')) {
-            $imagePath = $this->uploadImage($request->file('image'));
-        }
 
         $panchayat = Panchayat::find($validated['panchayat_id']);
         $panchayat_name = $panchayat->name;
 
-        $voter = Voter::create([
-            'serial_number' => $validated['serial_number'],
-            'ward_id' => $validated['ward_id'],
-            'panchayat' => $panchayat_name,
-            'panchayat_id' => $validated['panchayat_id'],
-            'image_path' => $imagePath,
-        ]);
+        $createdVoters = [];
 
-        // Create initial status record
-        VoterStatus::create([
-            'voter_id' => $voter->id,
-            'user_id' => $request->user()->id,
-            'status' => 'not_voted',
-        ]);
+        foreach ($validated['voters'] as $voterData) {
+            $imagePath = null;
+            if (isset($voterData['image'])) {
+                $imagePath = $this->uploadImage($voterData['image']);
+            }
 
-        $voter->load(['ward', 'latestStatus.user']);
+            $voter = Voter::create([
+                'serial_number' => $voterData['serial_number'],
+                'ward_id' => $validated['ward_id'],
+                'panchayat' => $panchayat_name,
+                'panchayat_id' => $validated['panchayat_id'],
+                'image_path' => $imagePath,
+            ]);
+
+            // Create initial status record
+            VoterStatus::create([
+                'voter_id' => $voter->id,
+                'user_id' => $request->user()->id,
+                'status' => 'not_voted',
+            ]);
+
+            $voter->load(['ward', 'latestStatus.user']);
+            $createdVoters[] = $voter;
+        }
 
         return response()->json([
-            'message' => 'Voter created successfully',
-            'voter' => $voter,
+            'message' => 'Voters created successfully',
+            'voters' => $createdVoters,
         ], 201);
     }
 
