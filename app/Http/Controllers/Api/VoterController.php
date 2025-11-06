@@ -219,7 +219,7 @@ class VoterController extends Controller
     public function update(Request $request, Voter $voter)
     {
         $this->authorize('update', $voter);
-
+dd($voter);
         $validated = $request->validate([
             'serial_number' => 'sometimes|required|string|unique:voters,serial_number,' . $voter->id,
             'ward_id' => 'sometimes|required|exists:wards,id',
