@@ -18,10 +18,15 @@ class VoterFactory extends Factory
      */
     public function definition(): array
     {
+    public function definition(): array
+    {
         return [
             'serial_number' => 'VOTER' . str_pad(fake()->unique()->numberBetween(1, 99999), 5, '0', STR_PAD_LEFT),
             'ward_id' => Ward::factory(),
             'panchayat_id' => Panchayat::factory(),
+            'panchayat' => function (array $attributes) {
+                return \App\Models\Panchayat::find($attributes['panchayat_id'])->name;
+            },
             'image_path' => null,
             'status' => false,
         ];

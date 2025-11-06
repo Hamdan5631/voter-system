@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('voters', function (Blueprint $table) {
-            $table->unsignedBigInteger('panchayat_id')->nullable()->after('panchayat');
+            $table->unsignedBigInteger('panchayat_id')->nullable();
             $table->foreign('panchayat_id')->references('id')->on('panchayats')->onDelete('set null');
         });
     }
