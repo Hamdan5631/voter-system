@@ -223,7 +223,6 @@ class VoterController extends Controller
         $validated = $request->validate([
             'serial_number' => 'sometimes|required|string|unique:voters,serial_number,' . $voter->id,
             'ward_id' => 'sometimes|required|exists:wards,id',
-            'panchayat' => 'sometimes|required|string|max:255',
             'panchayat_id' => 'sometimes|required|exists:panchayats,id',
             'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
@@ -237,15 +236,18 @@ class VoterController extends Controller
             $validated['image_path'] = $this->uploadImage($request->file('image'));
         }
 
-        $voter->serial_number = isset($validated['serial_number']) ? $validated['serial_number'] : $voter->serial_number;
-        $voter->ward_id = isset($validated['ward_id']) ? $validated['ward_id'] : $voter->ward_id;
-        $voter->panchayat = isset($validated['panchayat']) ? $validated['panchayat'] : $voter->panchayat;
-        $voter->panchayat_id = isset($validated['panchayat_id']) ? $validated['panchayat_id'] : $voter->panchayat_id;
-        $voter->image_path = isset($validated['image_path']) ? $validated['image_path'] : $voter->image_path;
-        $voter->save();
-dd($voter);
+        if (isset($validated['panchayat_id'])) {
+            $panchayat = Panchayat::find($validated['panchayat_id']);
+            $validated['panchayat'] = $panchayat->name;
+        }
+
+        $voter->update($validated);
+
+        $voter->load(['ward', 'latestStatus.user']);
+
         return response()->json([
             'message' => 'Voter updated successfully',
+            'voter' => $voter,
         ], 200);
     }
 
