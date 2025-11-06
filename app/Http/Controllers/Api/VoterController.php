@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Panchayat;
 use App\Models\Voter;
 use App\Models\VoterStatus;
 use App\Models\VoterWorkerAssignment;
@@ -71,7 +72,7 @@ class VoterController extends Controller
         $validated = $request->validate([
             'serial_number' => 'required|string|unique:voters,serial_number',
             'ward_id' => 'required|exists:wards,id',
-            'panchayat' => 'required|string|max:255',
+            'panchayat' => 'nullable|string|max:255',
             'panchayat_id' => 'required|exists:panchayats,id',
             'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
@@ -82,10 +83,13 @@ class VoterController extends Controller
             $imagePath = $this->uploadImage($request->file('image'));
         }
 
+        $panchayat = Panchayat::find($validated['panchayat_id']);
+        $panchayat_name = $panchayat->name;
+        
         $voter = Voter::create([
             'serial_number' => $validated['serial_number'],
             'ward_id' => $validated['ward_id'],
-            'panchayat' => $validated['panchayat'],
+            'panchayat' => $panchayat_name,
             'panchayat_id' => $validated['panchayat_id'],
             'image_path' => $imagePath,
         ]);
