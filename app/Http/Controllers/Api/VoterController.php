@@ -237,11 +237,11 @@ class VoterController extends Controller
             $validated['image_path'] = $this->uploadImage($request->file('image'));
         }
 
-        $voter->serial_number = $validated['serial_number'];
-        $voter->ward_id = $validated['ward_id'];
-        $voter->panchayat = $validated['panchayat'];
-        $voter->panchayat_id = $validated['panchayat_id'];
-        $voter->image_path = $validated['image_path'];
+        $voter->serial_number = isset($validated['serial_number']) ? $validated['serial_number'] : $voter->serial_number;
+        $voter->ward_id = isset($validated['ward_id']) ? $validated['ward_id'] : $voter->ward_id;
+        $voter->panchayat = isset($validated['panchayat']) ? $validated['panchayat'] : $voter->panchayat;
+        $voter->panchayat_id = isset($validated['panchayat_id']) ? $validated['panchayat_id'] : $voter->panchayat_id;
+        $voter->image_path = isset($validated['image_path']) ? $validated['image_path'] : $voter->image_path;
         $voter->save();
 
         return response()->json([
