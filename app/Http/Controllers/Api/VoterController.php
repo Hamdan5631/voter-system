@@ -71,7 +71,7 @@ class VoterController extends Controller
         $validated = $request->validate([
             'serial_number' => 'required|string|unique:voters,serial_number',
             'ward_id' => 'required|exists:wards,id',
-            'panchayat' => 'required|string|max:255',
+            'panchayat' => 'nullable|string|max:255',
             'panchayat_id' => 'required|exists:panchayats,id',
             'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
