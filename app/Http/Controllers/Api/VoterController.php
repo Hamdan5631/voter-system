@@ -226,7 +226,7 @@ class VoterController extends Controller
             'panchayat_id' => 'sometimes|required|exists:panchayats,id',
             'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
-
+dd($validated);
         // Handle image upload
         if ($request->hasFile('image')) {
             // Delete old image
