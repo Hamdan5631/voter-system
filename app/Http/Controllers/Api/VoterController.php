@@ -219,7 +219,7 @@ class VoterController extends Controller
     public function update(Request $request, Voter $voter)
     {
         $this->authorize('update', $voter);
-    
+    dd($request->all());
         // Validate (still for safety)
         $request->validate([
             'serial_number' => 'sometimes|required|string|unique:voters,serial_number,' . $voter->id,
@@ -247,7 +247,6 @@ class VoterController extends Controller
                 $request->merge(['panchayat' => $panchayat->name]);
             }
         }
-    dd($request->all());
         // ✅ Update voter directly from request data
         $voter->update($request->all());
     
