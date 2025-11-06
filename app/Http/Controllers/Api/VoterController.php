@@ -235,7 +235,7 @@ class VoterController extends Controller
             }
             $validated['image_path'] = $this->uploadImage($request->file('image'));
         }
-
+ 
         if (isset($validated['panchayat_id'])) {
             $panchayat = Panchayat::find($validated['panchayat_id']);
             $validated['panchayat'] = $panchayat->name;
