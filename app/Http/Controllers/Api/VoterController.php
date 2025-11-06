@@ -120,7 +120,7 @@ class VoterController extends Controller
             'ward_id' => 'required|exists:wards,id',
             'panchayat_id' => 'required|exists:panchayats,id',
             'voters' => 'required|array',
-            'voters.*.serial_number' => 'required|string|unique:voters,serial_number',
+            'voters.*.serial_number' => 'required|string',
             'voters.*.image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
@@ -128,8 +128,17 @@ class VoterController extends Controller
         $panchayat_name = $panchayat->name;
 
         $createdVoters = [];
+        $duplicateVoters = [];
 
         foreach ($validated['voters'] as $voterData) {
+            // Check for existing serial number
+            $existingVoter = Voter::where('serial_number', $voterData['serial_number'])->first();
+
+            if ($existingVoter) {
+                $duplicateVoters[] = $voterData['serial_number'];
+                continue; // Skip to the next voter
+            }
+
             $imagePath = null;
             if (isset($voterData['image'])) {
                 $imagePath = $this->uploadImage($voterData['image']);
@@ -154,9 +163,15 @@ class VoterController extends Controller
             $createdVoters[] = $voter;
         }
 
+        $message = sprintf('%d voters created successfully.', count($createdVoters));
+        if (!empty($duplicateVoters)) {
+            $message .= sprintf(' %d voters already exist with serial numbers: %s.', count($duplicateVoters), implode(', ', $duplicateVoters));
+        }
+
         return response()->json([
-            'message' => 'Voters created successfully',
+            'message' => $message,
             'voters' => $createdVoters,
+            'duplicate_serial_numbers' => $duplicateVoters,
         ], 201);
     }
 
