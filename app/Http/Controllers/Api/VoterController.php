@@ -219,7 +219,7 @@ class VoterController extends Controller
     public function update(Request $request, Voter $voter)
     {
         $this->authorize('update', $voter);
-dd($voter);
+
         $validated = $request->validate([
             'serial_number' => 'sometimes|required|string|unique:voters,serial_number,' . $voter->id,
             'ward_id' => 'sometimes|required|exists:wards,id',
@@ -237,13 +237,15 @@ dd($voter);
             $validated['image_path'] = $this->uploadImage($request->file('image'));
         }
 
-        $voter->update($validated);
-
-        $voter->load(['ward', 'latestStatus.user']);
+        $voter->serial_number = $validated['serial_number'];
+        $voter->ward_id = $validated['ward_id'];
+        $voter->panchayat = $validated['panchayat'];
+        $voter->panchayat_id = $validated['panchayat_id'];
+        $voter->image_path = $validated['image_path'];
+        $voter->save();
 
         return response()->json([
             'message' => 'Voter updated successfully',
-            'voter' => $voter,
         ], 200);
     }
 
