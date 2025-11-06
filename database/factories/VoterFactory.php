@@ -21,7 +21,7 @@ class VoterFactory extends Factory
         return [
             'serial_number' => 'VOTER' . str_pad(fake()->unique()->numberBetween(1, 99999), 5, '0', STR_PAD_LEFT),
             'ward_id' => Ward::factory(),
-            'panchayat' => fake()->city(),
+            'panchayat_id' => Panchayat::factory(),
             'image_path' => null,
             'status' => false,
         ];

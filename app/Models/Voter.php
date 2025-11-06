@@ -18,7 +18,6 @@ class Voter extends Model
     protected $fillable = [
         'serial_number',
         'ward_id',
-        'panchayat',
         'panchayat_id',
         'image_path',
     ];
@@ -164,13 +163,6 @@ class Voter extends Model
         return $query->where('serial_number', 'like', "%{$serialNumber}%");
     }
 
-    /**
-     * Scope to filter by panchayat.
-     */
-    public function scopePanchayat($query, $panchayat)
-    {
-        return $query->where('panchayat', 'like', "%{$panchayat}%");
-    }
 
     /**
      * Get the full URL for the voter image.
