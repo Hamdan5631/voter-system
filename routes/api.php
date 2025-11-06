@@ -58,6 +58,7 @@ Route::middleware('auth:sanctum')->group(function () {
         // Superadmin only
         Route::middleware('role:superadmin')->group(function () {
             Route::post('/', [VoterController::class, 'store'])->name('api.voters.store');
+            Route::post('/bulk-store', [VoterController::class, 'bulkStore'])->name('api.voters.bulk-store');
             Route::put('/{voter}', [VoterController::class, 'update'])->name('api.voters.update');
             Route::delete('/{voter}', [VoterController::class, 'destroy'])->name('api.voters.destroy');
         });
