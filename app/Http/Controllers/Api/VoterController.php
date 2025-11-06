@@ -243,7 +243,7 @@ class VoterController extends Controller
         $voter->panchayat_id = isset($validated['panchayat_id']) ? $validated['panchayat_id'] : $voter->panchayat_id;
         $voter->image_path = isset($validated['image_path']) ? $validated['image_path'] : $voter->image_path;
         $voter->save();
-
+dd($voter);
         return response()->json([
             'message' => 'Voter updated successfully',
         ], 200);
