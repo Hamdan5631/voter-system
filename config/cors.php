@@ -20,7 +20,7 @@ return [
     'allowed_methods' => ['*'],
 
     'allowed_origins' => [
-        'http://localhost:5173', // or your production frontend domain
+        '*', // or your production frontend domain
     ],
 
     'allowed_origins_patterns' => [],
