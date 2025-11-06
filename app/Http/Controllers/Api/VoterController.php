@@ -247,7 +247,7 @@ class VoterController extends Controller
                 $request->merge(['panchayat' => $panchayat->name]);
             }
         }
-    
+    dd($request->all());
         // ✅ Update voter directly from request data
         $voter->update($request->all());
     
