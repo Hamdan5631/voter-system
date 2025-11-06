@@ -216,8 +216,9 @@ class VoterController extends Controller
     /**
      * Update the specified voter.
      */
-    public function update(Request $request, Voter $voter)
+    public function update(Request $request,$voterId)
     {
+        $voter = Voter::find($voterId);
         $this->authorize('update', $voter);
 
         $validated = $request->validate([
