@@ -219,37 +219,47 @@ class VoterController extends Controller
     public function update(Request $request, Voter $voter)
     {
         $this->authorize('update', $voter);
-
-        $validated = $request->validate([
+    
+        // Validate (still for safety)
+        $request->validate([
             'serial_number' => 'sometimes|required|string|unique:voters,serial_number,' . $voter->id,
             'ward_id' => 'sometimes|required|exists:wards,id',
             'panchayat_id' => 'sometimes|required|exists:panchayats,id',
             'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
+    
         // Handle image upload
         if ($request->hasFile('image')) {
-            // Delete old image
+            // Delete old image if exists
             if ($voter->image_path) {
                 $this->deleteImage($voter->image_path);
             }
-            $validated['image_path'] = $this->uploadImage($request->file('image'));
+    
+            // Upload new image and merge into request
+            $imagePath = $this->uploadImage($request->file('image'));
+            $request->merge(['image_path' => $imagePath]);
         }
- 
-        if (isset($validated['panchayat_id'])) {
-            $panchayat = Panchayat::find($validated['panchayat_id']);
-            $validated['panchayat'] = $panchayat->name;
+    
+        // Set panchayat name if ID provided
+        if ($request->filled('panchayat_id')) {
+            $panchayat = Panchayat::find($request->panchayat_id);
+            if ($panchayat) {
+                $request->merge(['panchayat' => $panchayat->name]);
+            }
         }
-
+    
+        // ✅ Update voter directly from request data
         $voter->update($request->all());
-
+    
+        // Reload relations
         $voter->load(['ward', 'latestStatus.user']);
-
+    
         return response()->json([
             'message' => 'Voter updated successfully',
             'voter' => $voter,
         ], 200);
     }
-
+    
     /**
      * Remove the specified voter.
      */
