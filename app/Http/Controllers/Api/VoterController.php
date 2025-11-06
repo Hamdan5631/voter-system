@@ -47,6 +47,11 @@ class VoterController extends Controller
             $query->panchayat($request->panchayat);
         }
 
+        if ($request->has('panchayat_id')) {
+            $query->where('panchayat_id', $request->panchayat_id);
+        }
+
+
         if ($request->has('status')) {
             $query->status($request->status);
         }
@@ -67,6 +72,7 @@ class VoterController extends Controller
             'serial_number' => 'required|string|unique:voters,serial_number',
             'ward_id' => 'required|exists:wards,id',
             'panchayat' => 'required|string|max:255',
+            'panchayat_id' => 'required|exists:panchayats,id',
             'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
@@ -80,6 +86,7 @@ class VoterController extends Controller
             'serial_number' => $validated['serial_number'],
             'ward_id' => $validated['ward_id'],
             'panchayat' => $validated['panchayat'],
+            'panchayat_id' => $validated['panchayat_id'],
             'image_path' => $imagePath,
         ]);
 
@@ -162,6 +169,7 @@ class VoterController extends Controller
             'serial_number' => 'sometimes|required|string|unique:voters,serial_number,' . $voter->id,
             'ward_id' => 'sometimes|required|exists:wards,id',
             'panchayat' => 'sometimes|required|string|max:255',
+            'panchayat_id' => 'sometimes|required|exists:panchayats,id',
             'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 

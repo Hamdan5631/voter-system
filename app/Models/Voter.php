@@ -19,6 +19,7 @@ class Voter extends Model
         'serial_number',
         'ward_id',
         'panchayat',
+        'panchayat_id',
         'image_path',
     ];
 
@@ -49,6 +50,14 @@ class Voter extends Model
     public function ward()
     {
         return $this->belongsTo(Ward::class);
+    }
+
+    /**
+     * Get the panchayat that this voter belongs to.
+     */
+    public function panchayat()
+    {
+        return $this->belongsTo(Panchayat::class);
     }
 
     /**
