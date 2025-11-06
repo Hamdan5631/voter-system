@@ -43,7 +43,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     // Users routes (Superadmin only)
-    Route::middleware('role:superadmin|team_lead')->group(function () {
+    Route::middleware('role:superadmin|team_lead|booth_agent')->group(function () {
         Route::apiResource('users', UserController::class);
     });
 
