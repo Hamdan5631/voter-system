@@ -59,9 +59,7 @@ class OverviewController extends Controller
         $notVotedCount = $totalVoters - $votedCount;
         $assignedCount = (clone $query)->has('assignment')->count();
         $notAssignedCount = (clone $query)->doesntHave('assignment')->count();
-        $notVisitedCount = (clone $query)->whereHas('latestStatus', function ($q) {
-            $q->where('status', 'not_visited');
-        })->count();
+        $notVisitedCount = $totalVoters - $visitedCount;
         $votedPercentage = $totalVoters > 0 ? ($votedCount / $totalVoters) * 100 : 0;
         $notVotedPercentage = $totalVoters > 0 ? ($notVotedCount / $totalVoters) * 100 : 0;
 
