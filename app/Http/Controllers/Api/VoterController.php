@@ -549,7 +549,7 @@ class VoterController extends Controller
     private function getImageDisk(): string
     {
         // Use S3 if configured, otherwise use public/local
-        return env('VOTER_IMAGE_DISK', env('FILESYSTEM_DISK', 'public'));
+        return config('filesystems.default', 's3');
     }
 
     /**
