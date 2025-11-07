@@ -300,7 +300,7 @@ class VoterController extends Controller
         $user = $request->user();
         
         // Check authorization - workers can only set to 'visited'
-        if ($user->isWorker() && ($request->status !== 'visited' || $request->status !== 'not_visited')) {
+        if ($user->isWorker() && ($request->status != 'visited' || $request->status != 'not_visited')) {
             abort(403, 'Workers can only change status to "visited" or "not_visited"');
         }
         
