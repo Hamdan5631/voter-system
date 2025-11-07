@@ -54,8 +54,15 @@ class AuthController extends Controller
      */
     public function user(Request $request)
     {
+        $user = $request->user()->load('ward');
+
+        if ($user->isWorker()) {
+            $teamLead = User::role('team_lead')->where('ward_id', $user->ward_id)->first();
+            $user->team_lead = $teamLead;
+        }
+
         return response()->json([
-            'user' => $request->user()->load('ward'),
+            'user' => $user,
         ], 200);
     }
 }
