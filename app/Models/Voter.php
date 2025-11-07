@@ -161,7 +161,7 @@ class Voter extends Model
      */
     public function scopeSearchSerialNumber($query, $serialNumber)
     {
-        return $query->where('serial_number', 'like', "%{$serialNumber}%");
+        return $query->where('serial_number', $serialNumber);
     }
 
     /**
