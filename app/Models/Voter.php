@@ -182,13 +182,7 @@ class Voter extends Model
             return null;
         }
 
-        $disk = env('VOTER_IMAGE_DISK', env('FILESYSTEM_DISK', 'public'));
-        
-        if ($disk === 's3') {
-            return Storage::disk('s3')->url($this->image_path);
-        } else {
-            return Storage::disk('public')->url($this->image_path);
-        }
+        return Storage::disk(config('filesystems.default', 's3'))->url($this->image_path);
     }
 
     /**
