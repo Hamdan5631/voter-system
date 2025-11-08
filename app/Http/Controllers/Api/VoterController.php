@@ -514,12 +514,6 @@ class VoterController extends Controller
         $voters = $query->latest()->paginate($request->get('per_page', 15));
 
         // If no assigned voters found, return a custom 404 not found response
-        if ($voters->isEmpty()) {
-            return response()->json([
-                'message' => 'No assigned voters found'
-            ], 404);
-        }
-
         return response()->json($voters, 200);
     }
 
