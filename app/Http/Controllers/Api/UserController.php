@@ -68,6 +68,18 @@ class UserController extends Controller
 
         $validated = $validator->validated();
 
+        if ($validated['role'] === 'booth_agent') {
+            $existingAgent = User::where('booth_id', $validated['booth_id'])
+                                 ->where('role', 'booth_agent')
+                                 ->exists();
+
+            if ($existingAgent) {
+                return response()->json([
+                    'message' => 'A booth agent is already assigned to this booth',
+                ], 422);
+            }
+        }
+
         // Validate ward assignment based on role
         if (in_array($validated['role'], ['team_lead', 'booth_agent', 'worker'])) {
             if (empty($validated['ward_id'])) {
@@ -127,6 +139,20 @@ class UserController extends Controller
             'ward_id' => 'nullable',
             'booth_id' => 'nullable',
         ]);
+
+        if (isset($validated['role']) && $validated['role'] === 'booth_agent') {
+            $boothId = $validated['booth_id'] ?? $user->booth_id;
+            $existingAgent = User::where('booth_id', $boothId)
+                                 ->where('role', 'booth_agent')
+                                 ->where('id', '!=', $user->id)
+                                 ->exists();
+
+            if ($existingAgent) {
+                return response()->json([
+                    'message' => 'A booth agent is already assigned to this booth',
+                ], 422);
+            }
+        }
 
         // Validate ward assignment based on role
         if (isset($validated['role']) && in_array($validated['role'], ['team_lead', 'booth_agent', 'worker'])) {
