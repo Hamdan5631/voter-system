@@ -43,9 +43,6 @@ class WardController extends Controller
             'ward_number' => [
                 'required',
                 'string',
-                Rule::unique('wards')->where(function ($query) use ($request) {
-                    return $query->where('panchayat_id', $request->panchayat_id);
-                }),
             ],
             'panchayat_id' => 'required|exists:panchayats,id',
             'description' => 'nullable|string',
@@ -80,9 +77,6 @@ class WardController extends Controller
                 'sometimes',
                 'required',
                 'string',
-                Rule::unique('wards')->where(function ($query) use ($request, $ward) {
-                    return $query->where('panchayat_id', $request->panchayat_id ?? $ward->panchayat_id);
-                })->ignore($ward->id),
             ],
             'panchayat_id' => 'sometimes|required|exists:panchayats,id',
             'description' => 'nullable|string',
