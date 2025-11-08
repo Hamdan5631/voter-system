@@ -8,6 +8,7 @@ use App\Models\Ward;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
@@ -46,7 +47,7 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|unique:users,email',
             'password' => 'required|string|min:8',
@@ -54,6 +55,12 @@ class UserController extends Controller
             'role' => ['required', 'string', Rule::in(['superadmin', 'team_lead', 'booth_agent', 'worker'])],
             'ward_id' => 'nullable|exists:wards,id',
         ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $validated = $validator->validated();
 
         // Validate ward assignment based on role
         if (in_array($validated['role'], ['team_lead', 'booth_agent', 'worker'])) {
@@ -74,12 +81,6 @@ class UserController extends Controller
                         'message' => ucfirst(str_replace('_', ' ', $validated['role'])) . ' already assigned to this ward',
                     ], 422);
                 }
-            }
-
-            if (in_array($validated['email'], ['email'])) {
-                return response()->json([
-                    'message' => 'Email already taken',
-                ], 422);
             }
         }
 
