@@ -491,6 +491,148 @@
       ]
     },
     {
+      "name": "Booths (Superadmin & Team Lead Only)",
+      "item": [
+        {
+          "name": "List Booths",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/booths?per_page=15&panchayat_id=1&ward_id=1",
+              "host": ["{{base_url}}"],
+              "path": ["booths"],
+              "query": [
+                {
+                  "key": "per_page",
+                  "value": "15"
+                },
+                {
+                  "key": "panchayat_id",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "ward_id",
+                  "value": "1",
+                  "disabled": true
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Booth",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sample Booth\",\n  \"booth_number\": \"B001\",\n  \"panchayat_id\": 1,\n  \"ward_id\": 1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/booths",
+              "host": ["{{base_url}}"],
+              "path": ["booths"]
+            }
+          }
+        },
+        {
+          "name": "Get Booth",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/booths/1",
+              "host": ["{{base_url}}"],
+              "path": ["booths", "1"]
+            }
+          }
+        },
+        {
+          "name": "Update Booth",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Booth Name\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/booths/1",
+              "host": ["{{base_url}}"],
+              "path": ["booths", "1"]
+            }
+          }
+        },
+        {
+          "name": "Delete Booth",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/booths/1",
+              "host": ["{{base_url}}"],
+              "path": ["booths", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
       "name": "Users (Superadmin Only)",
       "item": [
         {

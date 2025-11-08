@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\WardController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\PanchayatController;
 use App\Http\Controllers\Api\OverviewController;
+use App\Http\Controllers\Api\BoothController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -40,6 +41,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::middleware('role:superadmin|team_lead')->group(function () {
         Route::apiResource('wards', WardController::class);
         Route::get('panchayats/{panchayat}/wards', [WardController::class, 'getByPanchayat'])->name('api.panchayats.wards');
+    });
+
+    // Booths routes (Superadmin & Team Lead)
+    Route::middleware('role:superadmin|team_lead')->group(function () {
+        Route::apiResource('booths', BoothController::class);
     });
 
     // Users routes (Superadmin only)
