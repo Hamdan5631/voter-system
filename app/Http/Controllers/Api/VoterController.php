@@ -10,6 +10,7 @@ use App\Models\VoterWorkerAssignment;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 
 class VoterController extends Controller
 {
@@ -74,7 +75,15 @@ class VoterController extends Controller
         $this->authorize('create', Voter::class);
 
         $validated = $request->validate([
-            'serial_number' => 'required|string|unique:voters,serial_number',
+            'serial_number' => [
+                'required',
+                'string',
+                Rule::unique('voters')->where(function ($query) use ($request) {
+                    return $query->where('ward_id', $request->ward_id)
+                        ->where('panchayat_id', $request->panchayat_id)
+                        ->where('booth_id', $request->booth_id);
+                }),
+            ],
             'ward_id' => 'required|exists:wards,id',
             'panchayat_id' => 'required|exists:panchayats,id',
             'booth_id' => 'nullable|exists:booths,id',
@@ -138,7 +147,11 @@ class VoterController extends Controller
 
         foreach ($validated['voters'] as $voterData) {
             // Check for existing serial number
-            $existingVoter = Voter::where('serial_number', $voterData['serial_number'])->first();
+            $existingVoter = Voter::where('serial_number', $voterData['serial_number'])
+                ->where('ward_id', $validated['ward_id'])
+                ->where('panchayat_id', $validated['panchayat_id'])
+                ->where('booth_id', $validated['booth_id'] ?? null)
+                ->first();
 
             if ($existingVoter) {
                 $duplicateVoters[] = $voterData['serial_number'];
@@ -243,7 +256,19 @@ class VoterController extends Controller
         $this->authorize('update', $voter);
         // Validate (still for safety)
         $request->validate([
-            'serial_number' => 'sometimes|required|string|unique:voters,serial_number,' . $voter->id,
+            'serial_number' => [
+                'sometimes',
+                'required',
+                'string',
+                Rule::unique('voters')
+                    ->ignore($voter->id)
+                    ->where(function ($query) use ($request, $voter) {
+                        return $query
+                            ->where('ward_id', $request->input('ward_id', $voter->ward_id))
+                            ->where('panchayat_id', $request->input('panchayat_id', $voter->panchayat_id))
+                            ->where('booth_id', $request->input('booth_id', $voter->booth_id));
+                    }),
+            ],
             'ward_id' => 'sometimes|required|exists:wards,id',
             'panchayat_id' => 'sometimes|required|exists:panchayats,id',
             'booth_id' => 'nullable|exists:booths,id',
