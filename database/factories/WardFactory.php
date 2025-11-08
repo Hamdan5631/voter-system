@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Panchayat;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -19,7 +20,7 @@ class WardFactory extends Factory
         return [
             'name' => fake()->words(2, true) . ' Ward',
             'ward_number' => 'WARD' . str_pad(fake()->unique()->numberBetween(1, 9999), 4, '0', STR_PAD_LEFT),
-            'panchayat' => fake()->city(),
+            'panchayat_id' => Panchayat::factory(),
             'description' => fake()->sentence(),
         ];
     }

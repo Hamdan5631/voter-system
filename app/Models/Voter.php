@@ -20,6 +20,7 @@ class Voter extends Model
         'ward_id',
         'panchayat',
         'panchayat_id',
+        'booth_id',
         'image_path',
     ];
 
@@ -58,6 +59,14 @@ class Voter extends Model
     public function panchayat()
     {
         return $this->belongsTo(Panchayat::class);
+    }
+
+    /**
+     * Get the booth that this voter belongs to.
+     */
+    public function booth()
+    {
+        return $this->belongsTo(Booth::class);
     }
 
     /**

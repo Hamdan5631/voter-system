@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Ward;
 use App\Models\Panchayat;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class WardController extends Controller
 {
@@ -39,7 +40,13 @@ class WardController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'ward_number' => 'required|string|unique:wards,ward_number',
+            'ward_number' => [
+                'required',
+                'string',
+                Rule::unique('wards')->where(function ($query) use ($request) {
+                    return $query->where('panchayat_id', $request->panchayat_id);
+                }),
+            ],
             'panchayat_id' => 'required|exists:panchayats,id',
             'description' => 'nullable|string',
         ]);
@@ -69,7 +76,14 @@ class WardController extends Controller
     {
         $validated = $request->validate([
             'name' => 'sometimes|required|string|max:255',
-            'ward_number' => 'sometimes|required|string|unique:wards,ward_number,' . $ward->id,
+            'ward_number' => [
+                'sometimes',
+                'required',
+                'string',
+                Rule::unique('wards')->where(function ($query) use ($request, $ward) {
+                    return $query->where('panchayat_id', $request->panchayat_id ?? $ward->panchayat_id);
+                })->ignore($ward->id),
+            ],
             'panchayat_id' => 'sometimes|required|exists:panchayats,id',
             'description' => 'nullable|string',
         ]);

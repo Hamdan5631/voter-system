@@ -19,7 +19,7 @@ class VoterController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
-        $query = Voter::query()->with(['ward', 'assignment.worker', 'latestStatus.user','panchayat']);
+        $query = Voter::query()->with(['ward', 'assignment.worker', 'latestStatus.user','panchayat', 'booth']);
 
         // Superadmin can see all voters
         if (!$user->isSuperadmin()) {
@@ -52,6 +52,10 @@ class VoterController extends Controller
             $query->where('panchayat_id', $request->panchayat_id);
         }
 
+        if ($request->has('booth_id')) {
+            $query->where('booth_id', $request->booth_id);
+        }
+
 
         if ($request->has('status')) {
             $query->status($request->status);
@@ -72,8 +76,8 @@ class VoterController extends Controller
         $validated = $request->validate([
             'serial_number' => 'required|string|unique:voters,serial_number',
             'ward_id' => 'required|exists:wards,id',
-            'panchayat' => 'nullable|string|max:255',
             'panchayat_id' => 'required|exists:panchayats,id',
+            'booth_id' => 'nullable|exists:booths,id',
             'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
@@ -91,6 +95,7 @@ class VoterController extends Controller
             'ward_id' => $validated['ward_id'],
             'panchayat' => $panchayat_name,
             'panchayat_id' => $validated['panchayat_id'],
+            'booth_id' => $validated['booth_id'] ?? null,
             'image_path' => $imagePath,
         ]);
 
@@ -101,7 +106,7 @@ class VoterController extends Controller
             'status' => 'not_voted',
         ]);
 
-        $voter->load(['ward', 'latestStatus.user']);
+        $voter->load(['ward', 'latestStatus.user', 'booth']);
 
         return response()->json([
             'message' => 'Voter created successfully',
@@ -119,6 +124,7 @@ class VoterController extends Controller
         $validated = $request->validate([
             'ward_id' => 'required|exists:wards,id',
             'panchayat_id' => 'required|exists:panchayats,id',
+            'booth_id' => 'nullable|exists:booths,id',
             'voters' => 'required|array',
             'voters.*.serial_number' => 'required|string',
             'voters.*.image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
@@ -149,6 +155,7 @@ class VoterController extends Controller
                 'ward_id' => $validated['ward_id'],
                 'panchayat' => $panchayat_name,
                 'panchayat_id' => $validated['panchayat_id'],
+                'booth_id' => $validated['booth_id'] ?? null,
                 'image_path' => $imagePath,
             ]);
 
@@ -159,7 +166,7 @@ class VoterController extends Controller
                 'status' => 'not_voted',
             ]);
 
-            $voter->load(['ward', 'latestStatus.user']);
+            $voter->load(['ward', 'latestStatus.user', 'booth']);
             $createdVoters[] = $voter;
         }
 
@@ -185,7 +192,7 @@ class VoterController extends Controller
         ]);
 
         $user = $request->user();
-        $query = Voter::query()->with(['ward', 'assignment.worker', 'assignment.teamLead', 'latestStatus.user']);
+        $query = Voter::query()->with(['ward', 'assignment.worker', 'assignment.teamLead', 'latestStatus.user', 'booth']);
 
         // Superadmin can see all voters
         if (!$user->isSuperadmin()) {
@@ -223,7 +230,7 @@ class VoterController extends Controller
     {
         $this->authorize('view', $voter);
 
-        $voter->load(['ward', 'assignment.worker', 'assignment.teamLead', 'latestStatus.user']);
+        $voter->load(['ward', 'assignment.worker', 'assignment.teamLead', 'latestStatus.user', 'booth']);
 
         return response()->json($voter, 200);
     }
@@ -239,6 +246,7 @@ class VoterController extends Controller
             'serial_number' => 'sometimes|required|string|unique:voters,serial_number,' . $voter->id,
             'ward_id' => 'sometimes|required|exists:wards,id',
             'panchayat_id' => 'sometimes|required|exists:panchayats,id',
+            'booth_id' => 'nullable|exists:booths,id',
             'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
     
@@ -265,7 +273,7 @@ class VoterController extends Controller
         $voter->update($request->all());
     
         // Reload relations
-        $voter->load(['ward', 'latestStatus.user']);
+        $voter->load(['ward', 'latestStatus.user', 'booth']);
     
         return response()->json([
             'message' => 'Voter updated successfully',

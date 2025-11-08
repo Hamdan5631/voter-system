@@ -686,7 +686,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"New Worker\",\n  \"email\": \"newworker@voterslist.com\",\n  \"password\": \"password123\",\n  \"role\": \"worker\",\n  \"ward_id\": 1,\n  \"phone\": \"1234567890\"\n}"
+              "raw": "{\n  \"name\": \"New Worker\",\n  \"email\": \"newworker@voterslist.com\",\n  \"password\": \"password123\",\n  \"role\": \"worker\",\n  \"ward_id\": 1,\n  \"booth_id\": 1,\n  \"phone\": \"1234567890\"\n}"
             },
             "url": {
               "raw": "{{base_url}}/users",
@@ -736,7 +736,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Updated Worker Name\",\n  \"phone\": \"9876543210\"\n}"
+              "raw": "{\n  \"name\": \"Updated Worker Name\",\n  \"phone\": \"9876543210\",\n  \"booth_id\": 1\n}"
             },
             "url": {
               "raw": "{{base_url}}/users/1",
@@ -972,6 +972,11 @@
                 {
                   "key": "panchayat",
                   "value": "Panchayat A",
+                  "type": "text"
+                },
+                {
+                  "key": "booth_id",
+                  "value": "1",
                   "type": "text"
                 },
                 {

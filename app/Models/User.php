@@ -24,6 +24,7 @@ class User extends Authenticatable
         'phone',
         'role',
         'ward_id',
+        'booth_id',
     ];
 
     /**
@@ -52,6 +53,14 @@ class User extends Authenticatable
     public function ward()
     {
         return $this->belongsTo(Ward::class);
+    }
+
+    /**
+     * Get the booth that the user belongs to.
+     */
+    public function booth()
+    {
+        return $this->belongsTo(Booth::class);
     }
 
     /**

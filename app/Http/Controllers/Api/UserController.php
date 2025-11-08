@@ -17,7 +17,7 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        $query = User::query()->with('ward');
+        $query = User::query()->with(['ward', 'booth']);
 
         // Filter by role
         if ($request->has('role')) {
@@ -27,6 +27,11 @@ class UserController extends Controller
         // Filter by ward
         if ($request->has('ward_id')) {
             $query->where('ward_id', $request->ward_id);
+        }
+
+        // Filter by booth
+        if ($request->has('booth_id')) {
+            $query->where('booth_id', $request->booth_id);
         }
 
         // Search by name or email
@@ -54,6 +59,7 @@ class UserController extends Controller
             'phone' => 'nullable|string|max:20',
             'role' => ['required', 'string', Rule::in(['superadmin', 'team_lead', 'booth_agent', 'worker'])],
             'ward_id' => 'nullable|exists:wards,id',
+            'booth_id' => 'nullable|exists:booths,id',
         ]);
 
         if ($validator->fails()) {
@@ -83,6 +89,12 @@ class UserController extends Controller
                 }
             }
         }
+        
+        if ($validated['role'] === 'booth_agent' && empty($validated['booth_id'])) {
+            return response()->json([
+                'message' => 'Booth is required for booth agent',
+            ], 422);
+        }
 
         $validated['password'] = Hash::make($validated['password']);
         $user = User::create($validated);
@@ -90,7 +102,7 @@ class UserController extends Controller
 
         return response()->json([
             'message' => 'User created successfully',
-            'user' => $user->load('ward'),
+            'user' => $user->load(['ward', 'booth']),
         ], 201);
     }
 
@@ -99,7 +111,7 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        $user->load('ward');
+        $user->load(['ward', 'booth']);
 
         // Add assigned voters if worker
         if ($user->isWorker()) {
@@ -126,6 +138,7 @@ class UserController extends Controller
             'phone' => 'nullable|string|max:20',
             'role' => ['sometimes', 'required', 'string', Rule::in(['superadmin', 'team_lead', 'booth_agent', 'worker'])],
             'ward_id' => 'nullable|exists:wards,id',
+            'booth_id' => 'nullable|exists:booths,id',
         ]);
 
         // Validate ward assignment based on role
@@ -153,6 +166,15 @@ class UserController extends Controller
             }
         }
 
+        if ((isset($validated['role']) && $validated['role'] === 'booth_agent') || $user->role === 'booth_agent') {
+            $boothId = $validated['booth_id'] ?? $user->booth_id;
+            if (empty($boothId)) {
+                return response()->json([
+                    'message' => 'Booth is required for booth agent',
+                ], 422);
+            }
+        }
+
         if (isset($validated['password'])) {
             $validated['password'] = Hash::make($validated['password']);
         }
@@ -166,7 +188,7 @@ class UserController extends Controller
 
         return response()->json([
             'message' => 'User updated successfully',
-            'user' => $user->load('ward'),
+            'user' => $user->load(['ward', 'booth']),
         ], 200);
     }
 
