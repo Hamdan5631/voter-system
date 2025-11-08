@@ -58,8 +58,8 @@ class UserController extends Controller
             'password' => 'required|string|min:8',
             'phone' => 'nullable|string|max:20',
             'role' => ['required', 'string', Rule::in(['superadmin', 'team_lead', 'booth_agent', 'worker'])],
-            'ward_id' => 'nullable|exists:wards,id',
-            'booth_id' => 'nullable|exists:booths,id',
+            'ward_id' => 'nullable',
+            'booth_id' => 'nullable',
         ]);
 
         if ($validator->fails()) {
@@ -137,8 +137,8 @@ class UserController extends Controller
             'password' => 'sometimes|string|min:8',
             'phone' => 'nullable|string|max:20',
             'role' => ['sometimes', 'required', 'string', Rule::in(['superadmin', 'team_lead', 'booth_agent', 'worker'])],
-            'ward_id' => 'nullable|exists:wards,id',
-            'booth_id' => 'nullable|exists:booths,id',
+            'ward_id' => 'nullable',
+            'booth_id' => 'nullable',
         ]);
 
         // Validate ward assignment based on role
