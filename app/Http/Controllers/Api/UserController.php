@@ -58,7 +58,7 @@ class UserController extends Controller
             'password' => 'required|string|min:8',
             'phone' => 'nullable|string|max:20',
             'role' => ['required', 'string', Rule::in(['superadmin', 'team_lead', 'booth_agent', 'worker'])],
-            'ward_id' => 'nullable',
+            'ward_id' => 'required',
             'booth_id' => 'nullable',
         ]);
 
@@ -74,19 +74,6 @@ class UserController extends Controller
                 return response()->json([
                     'message' => 'Ward is required for this role',
                 ], 422);
-            }
-
-            // Check if team_lead or booth_agent already exists for this ward
-            if (in_array($validated['role'], ['team_lead', 'booth_agent'])) {
-                $existingUser = User::where('ward_id', $validated['ward_id'])
-                    ->where('role', $validated['role'])
-                    ->first();
-
-                if ($existingUser) {
-                    return response()->json([
-                        'message' => ucfirst(str_replace('_', ' ', $validated['role'])) . ' already assigned to this ward',
-                    ], 422);
-                }
             }
         }
         
@@ -151,19 +138,7 @@ class UserController extends Controller
                 ], 422);
             }
 
-            // Check if team_lead or booth_agent already exists for this ward (excluding current user)
-            if (in_array($validated['role'], ['team_lead', 'booth_agent'])) {
-                $existingUser = User::where('ward_id', $wardId)
-                    ->where('role', $validated['role'])
-                    ->where('id', '!=', $user->id)
-                    ->first();
 
-                if ($existingUser) {
-                    return response()->json([
-                        'message' => ucfirst(str_replace('_', ' ', $validated['role'])) . ' already assigned to this ward',
-                    ], 422);
-                }
-            }
         }
 
         if ((isset($validated['role']) && $validated['role'] === 'booth_agent') || $user->role === 'booth_agent') {
