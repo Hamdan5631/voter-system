@@ -34,8 +34,8 @@ class OverviewController extends Controller
                 });
             }
         } elseif ($user->isBoothAgent()) {
-            // Booth Agent sees data for their ward only
-            $query->where('ward_id', $user->ward_id);
+            // Booth Agent sees data for their booth only
+            $query->where('booth_id', $user->booth_id);
         } elseif ($user->isWorker()) {
             // Worker sees data for their assigned voters only
             $query->whereHas('assignment', function ($q) use ($user) {
