@@ -36,7 +36,7 @@ class BoothController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'booth_number' => 'required|string|unique:booths,booth_number',
+            'booth_number' => 'required|string',
             'panchayat_id' => 'required|exists:panchayats,id',
             'ward_id' => 'required|exists:wards,id',
         ]);
@@ -61,7 +61,7 @@ class BoothController extends Controller
     {
         $validated = $request->validate([
             'name' => 'sometimes|required|string|max:255',
-            'booth_number' => ['sometimes', 'required', 'string', Rule::unique('booths')->ignore($booth->id)],
+            'booth_number' => 'sometimes|required|string',
             'panchayat_id' => 'sometimes|required|exists:panchayats,id',
             'ward_id' => 'sometimes|required|exists:wards,id',
         ]);
