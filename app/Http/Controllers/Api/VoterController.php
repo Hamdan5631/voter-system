@@ -234,7 +234,7 @@ class VoterController extends Controller
         if (!$voter) {
             return response()->json([
                 'message' => 'Voter not found',
-            ], 404);
+            ], 200);
         }
 
         // Check authorization
@@ -436,7 +436,7 @@ class VoterController extends Controller
             return response()->json(['message' => 'Voter unassigned successfully'], 200);
         }
 
-        return response()->json(['message' => 'Voter is not assigned'], 404);
+        return response()->json(['message' => 'Voter is not assigned'], 200);
     }
 
     /**
