@@ -198,10 +198,13 @@ class VoterController extends Controller
     /**
      * Find voter by serial number.
      */
-    public function findBySerialNumber(Request $request)
+    public function findVoter(Request $request)
     {
         $validated = $request->validate([
             'serial_number' => 'required|string',
+            'ward_id' => 'required|exists:wards,id',
+            'panchayat_id' => 'required|exists:panchayats,id',
+            'booth_id' => 'nullable|exists:booths,id',
         ]);
 
         $user = $request->user();
@@ -222,7 +225,11 @@ class VoterController extends Controller
         }
 
         // Find by exact serial number
-        $voter = $query->where('serial_number', $validated['serial_number'])->first();
+        $voter = $query->where('serial_number', $validated['serial_number'])
+            ->where('ward_id', $validated['ward_id'])
+            ->where('panchayat_id', $validated['panchayat_id'])
+            ->where('booth_id', $validated['booth_id'] ?? null)
+            ->first();
 
         if (!$voter) {
             return response()->json([
