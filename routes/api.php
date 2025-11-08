@@ -44,7 +44,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     // Booths routes (Superadmin & Team Lead)
-    Route::middleware('role:superadmin|team_lead')->group(function () {
+    Route::middleware('role:superadmin|team_lead|booth_agent|worker')->group(function () {
         Route::apiResource('booths', BoothController::class);
     });
 
