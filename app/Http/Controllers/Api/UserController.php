@@ -75,6 +75,12 @@ class UserController extends Controller
                     ], 422);
                 }
             }
+
+            if (in_array($validated['email'], ['email'])) {
+                return response()->json([
+                    'message' => 'Email already taken',
+                ], 422);
+            }
         }
 
         $validated['password'] = Hash::make($validated['password']);
