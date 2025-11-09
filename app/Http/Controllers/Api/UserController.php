@@ -59,7 +59,7 @@ class UserController extends Controller
             'phone' => 'nullable|string|max:20',
             'role' => ['required', 'string', Rule::in(['superadmin', 'team_lead', 'booth_agent', 'worker'])],
             'ward_id' => 'required',
-            'booth_id' => 'nullable',
+            'booth_id' => 'required_if:role,booth_agent',
         ]);
 
         if ($validator->fails()) {
