@@ -20,7 +20,8 @@ return [
     'allowed_methods' => ['*'],
 
     'allowed_origins' => [
-        '*', // or your production frontend domain
+        'https://admin.kalkagroup.com',
+        'https://voter.admin.kalkagroup.com',
     ],
 
     'allowed_origins_patterns' => [],
