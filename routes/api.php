@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\PanchayatController;
 use App\Http\Controllers\Api\OverviewController;
 use App\Http\Controllers\Api\BoothController;
+use App\Http\Controllers\Api\VoterCategoryController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -51,6 +52,13 @@ Route::middleware('auth:sanctum')->group(function () {
     // Users routes (Superadmin only)
     Route::middleware('role:superadmin|team_lead|booth_agent')->group(function () {
         Route::apiResource('users', UserController::class);
+    });
+
+    // Voter Categories routes (Superadmin & Team Lead)
+    Route::middleware('role:superadmin|team_lead')->group(function () {
+        Route::apiResource('voter-categories', VoterCategoryController::class);
+        Route::post('voter-categories/{voter_category}/voters', [VoterCategoryController::class, 'addVoters']);
+        Route::delete('voter-categories/{voter_category}/voters', [VoterCategoryController::class, 'removeVoters']);
     });
 
     // Voters routes

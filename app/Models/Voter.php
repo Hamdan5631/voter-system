@@ -201,4 +201,14 @@ class Voter extends Model
     {
         return $this->voterStatuses()->with('user:id,name')->get();
     }
+
+    /**
+     * The categories that this voter belongs to.
+     */
+    public function voterCategories()
+    {
+        return $this->belongsToMany(VoterCategory::class, 'voter_category_voter')
+            ->withPivot('user_id')
+            ->withTimestamps();
+    }
 }
