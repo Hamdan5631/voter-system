@@ -21,6 +21,8 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users');
 
+            $table->timestamps();
+            
             $table->primary(['voter_id', 'voter_category_id']);
         });
     }
