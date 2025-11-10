@@ -13,7 +13,7 @@ class VoterCategoryPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasRole('team_lead');
+        return true;
     }
 
     /**
@@ -21,7 +21,7 @@ class VoterCategoryPolicy
      */
     public function view(User $user, VoterCategory $voterCategory): bool
     {
-        return $user->hasRole('team_lead');
+        return $user->id === $voterCategory->user_id;
     }
 
     /**
@@ -29,7 +29,7 @@ class VoterCategoryPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasRole('team_lead');
+        return true;
     }
 
     /**
@@ -37,7 +37,7 @@ class VoterCategoryPolicy
      */
     public function update(User $user, VoterCategory $voterCategory): bool
     {
-        return $user->hasRole('team_lead');
+        return $user->id === $voterCategory->user_id;
     }
 
     /**
@@ -45,7 +45,7 @@ class VoterCategoryPolicy
      */
     public function delete(User $user, VoterCategory $voterCategory): bool
     {
-        return $user->hasRole('team_lead');
+        return $user->id === $voterCategory->user_id;
     }
 
     /**
@@ -53,7 +53,7 @@ class VoterCategoryPolicy
      */
     public function addVoters(User $user, VoterCategory $voterCategory): bool
     {
-        return $user->hasRole('team_lead');
+        return $user->id === $voterCategory->user_id;
     }
 
     /**
@@ -61,6 +61,6 @@ class VoterCategoryPolicy
      */
     public function removeVoters(User $user, VoterCategory $voterCategory): bool
     {
-        return $user->hasRole('team_lead');
+        return $user->id === $voterCategory->user_id;
     }
 }

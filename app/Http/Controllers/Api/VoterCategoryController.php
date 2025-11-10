@@ -5,16 +5,25 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\VoterCategory;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class VoterCategoryController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $this->authorize('viewAny', VoterCategory::class);
-        return VoterCategory::all();
+        
+        $perPage = $request->query('per_page', 15);
+        $user = auth()->user();
+
+        if ($user->hasRole('superadmin')) {
+            return VoterCategory::with('user')->paginate($perPage);
+        }
+
+        return $user->voterCategories()->with('user')->paginate($perPage);
     }
 
     /**
@@ -24,11 +33,15 @@ class VoterCategoryController extends Controller
     {
         $this->authorize('create', VoterCategory::class);
         $request->validate([
-            'name' => 'required|string|max:255|unique:voter_categories,name',
+            'name' => ['required', 'string', 'max:255'],
             'description' => 'nullable|string',
         ]);
 
-        $voterCategory = VoterCategory::create($request->all());
+        $voterCategory = VoterCategory::create([
+            'name' => $request->name,
+            'description' => $request->description,
+            'user_id' => auth()->id(),
+        ]);
 
         return response()->json($voterCategory, 201);
     }
@@ -49,7 +62,7 @@ class VoterCategoryController extends Controller
     {
         $this->authorize('update', $voterCategory);
         $request->validate([
-            'name' => 'sometimes|required|string|max:255|unique:voter_categories,name,' . $voterCategory->id,
+            'name' => ['sometimes', 'required', 'string', 'max:255', Rule::unique('voter_categories')->where('user_id', auth()->id())->ignore($voterCategory->id)],
             'description' => 'nullable|string',
         ]);
 
