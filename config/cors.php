@@ -21,7 +21,7 @@ return [
 
     'allowed_origins' => [
         'https://admin.kalkagroup.com',
-        'https://voter.admin.kalkagroup.com',
+        'https://voter.kalkagroup.com',
     ],
 
     'allowed_origins_patterns' => [],
