@@ -48,6 +48,14 @@ class OverviewController extends Controller
             ], 403);
         }
 
+        // Filter by category_id if provided
+        $categoryId = $request->query('category_id');
+        if ($categoryId) {
+            $query->whereHas('voterCategories', function ($q) use ($categoryId) {
+                $q->where('voter_categories.id', $categoryId);
+            });
+        }
+
         // Get statistics
         $totalVoters = $query->count();
         $votedCount = (clone $query)->whereHas('latestStatus', function ($q) {
@@ -77,6 +85,7 @@ class OverviewController extends Controller
                 'not_voted_percentage' => round($notVotedPercentage, 2),
                 'role' => $user->role,
                 'ward_id' => $user->ward_id ?? null,
+                'category_id' => $categoryId ?? null,
             ],
         ], 200);
     }

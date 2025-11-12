@@ -112,4 +112,12 @@ class User extends Authenticatable
     {
         return $this->hasRole('worker');
     }
+
+    /**
+     * Get all voter categories created by this user.
+     */
+    public function voterCategories()
+    {
+        return $this->hasMany(VoterCategory::class);
+    }
 }

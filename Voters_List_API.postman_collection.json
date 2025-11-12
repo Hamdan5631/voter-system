@@ -1215,6 +1215,136 @@
           }
         }
       ]
+    },
+    {
+      "name": "Voter Categories (Superadmin & Team Lead Only)",
+      "item": [
+        {
+          "name": "List Voter Categories",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/voter-categories",
+              "host": ["{{base_url}}"],
+              "path": ["voter-categories"]
+            }
+          }
+        },
+        {
+          "name": "Create Voter Category",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"New Voter Category\",\n  \"description\": \"Description for the new category\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/voter-categories",
+              "host": ["{{base_url}}"],
+              "path": ["voter-categories"]
+            }
+          }
+        },
+        {
+          "name": "Get Voter Category",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/voter-categories/1",
+              "host": ["{{base_url}}"],
+              "path": ["voter-categories", "1"]
+            }
+          }
+        },
+        {
+          "name": "Update Voter Category",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Category Name\",\n  \"description\": \"Updated description for the category\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/voter-categories/1",
+              "host": ["{{base_url}}"],
+              "path": ["voter-categories", "1"]
+            }
+          }
+        },
+        {
+          "name": "Delete Voter Category",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/voter-categories/1",
+              "host": ["{{base_url}}"],
+              "path": ["voter-categories", "1"]
+            }
+          }
+        },
+        {
+          "name": "Add Voters to Category",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"voter_ids\": [1, 2, 3]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/voter-categories/1/voters",
+              "host": ["{{base_url}}"],
+              "path": ["voter-categories", "1", "voters"]
+            }
+          }
+        },
+        {
+          "name": "Remove Voters from Category",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"voter_ids\": [1, 2]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/voter-categories/1/voters",
+              "host": ["{{base_url}}"],
+              "path": ["voter-categories", "1", "voters"]
+            }
+          }
+        }
+      ]
     }
   ]
 }

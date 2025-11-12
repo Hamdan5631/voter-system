@@ -20,7 +20,7 @@ class VoterController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
-        $query = Voter::query()->with(['ward', 'assignment.worker', 'latestStatus.user','panchayat', 'booth']);
+        $query = Voter::query()->with(['ward', 'assignment.worker', 'latestStatus.user','panchayat', 'booth', 'voterCategories']);
 
         // Superadmin can see all voters
         if (!$user->isSuperadmin()) {
@@ -115,7 +115,7 @@ class VoterController extends Controller
             'status' => 'not_voted',
         ]);
 
-        $voter->load(['ward', 'latestStatus.user', 'booth']);
+        $voter->load(['ward', 'latestStatus.user', 'booth', 'voterCategories']);
 
         return response()->json([
             'message' => 'Voter created successfully',
@@ -179,7 +179,7 @@ class VoterController extends Controller
                 'status' => 'not_voted',
             ]);
 
-            $voter->load(['ward', 'latestStatus.user', 'booth']);
+            $voter->load(['ward', 'latestStatus.user', 'booth', 'voterCategories']);
             $createdVoters[] = $voter;
         }
 
@@ -208,7 +208,7 @@ class VoterController extends Controller
         ]);
 
         $user = $request->user();
-        $query = Voter::query()->with(['ward', 'assignment.worker', 'assignment.teamLead', 'latestStatus.user', 'booth']);
+        $query = Voter::query()->with(['ward', 'assignment.worker', 'assignment.teamLead', 'latestStatus.user', 'booth', 'voterCategories']);
 
         // Superadmin can see all voters
         if (!$user->isSuperadmin()) {
@@ -250,7 +250,7 @@ class VoterController extends Controller
     {
         $this->authorize('view', $voter);
 
-        $voter->load(['ward', 'assignment.worker', 'assignment.teamLead', 'latestStatus.user', 'booth']);
+        $voter->load(['ward', 'assignment.worker', 'assignment.teamLead', 'latestStatus.user', 'booth', 'voterCategories']);
 
         return response()->json($voter, 200);
     }
@@ -305,7 +305,7 @@ class VoterController extends Controller
         $voter->update($request->all());
     
         // Reload relations
-        $voter->load(['ward', 'latestStatus.user', 'booth']);
+        $voter->load(['ward', 'latestStatus.user', 'booth', 'voterCategories']);
     
         return response()->json([
             'message' => 'Voter updated successfully',
@@ -358,7 +358,7 @@ class VoterController extends Controller
         ]);
 
         // Reload voter with latest status
-        $voter->load(['ward', 'latestStatus.user']);
+        $voter->load(['ward', 'latestStatus.user', 'voterCategories']);
 
         return response()->json([
             'message' => 'Voter status updated successfully',
@@ -385,7 +385,7 @@ class VoterController extends Controller
 
         return response()->json([
             'message' => 'Remark updated successfully',
-            'voter' => $voter->load(['ward', 'assignment.worker', 'latestStatus.user']),
+            'voter' => $voter->load(['ward', 'assignment.worker', 'latestStatus.user', 'voterCategories']),
         ], 200);
     }
 
@@ -414,7 +414,7 @@ class VoterController extends Controller
             ]
         );
 
-        $voter->load(['ward', 'assignment.worker', 'assignment.teamLead', 'latestStatus.user']);
+        $voter->load(['ward', 'assignment.worker', 'assignment.teamLead', 'latestStatus.user', 'voterCategories']);
 
         return response()->json([
             'message' => 'Voter assigned to worker successfully',
@@ -445,7 +445,7 @@ class VoterController extends Controller
     public function getUnassignedVoters(Request $request)
     {
         $user = $request->user();
-        $query = Voter::query()->with(['ward', 'latestStatus.user'])
+        $query = Voter::query()->with(['ward', 'latestStatus.user', 'voterCategories'])
             ->whereDoesntHave('assignment');
 
         // Superadmin can see all unassigned voters
@@ -492,7 +492,7 @@ class VoterController extends Controller
         $query = Voter::query()
             ->join('voter_worker_assignments', 'voters.id', '=', 'voter_worker_assignments.voter_id')
             ->select('voters.*', 'voter_worker_assignments.worker_id as assigned_worker_id')
-            ->with(['ward', 'assignment.worker', 'latestStatus.user']);
+            ->with(['ward', 'assignment.worker', 'latestStatus.user', 'voterCategories']);
 
         // Superadmin can see all assigned voters
         if (!$user->isSuperadmin()) {
@@ -566,7 +566,7 @@ class VoterController extends Controller
                 ]
             );
 
-            $voter->load(['ward', 'assignment.worker', 'assignment.teamLead', 'latestStatus.user']);
+            $voter->load(['ward', 'assignment.worker', 'assignment.teamLead', 'latestStatus.user', 'voterCategories']);
             $assignedVoters[] = $voter;
         }
 
