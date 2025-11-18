@@ -21,6 +21,9 @@ class OverviewController extends Controller
             if ($request->has('ward_id')) {
                 $query->where('ward_id', $request->ward_id);
             }
+            if ($request->has('booth_id')) {
+                $query->where('booth_id', $request->booth_id);
+            }
             if ($request->has('worker_id')) {
                 $query->whereHas('assignment', function ($q) use ($request) {
                     $q->where('worker_id', $request->worker_id);
