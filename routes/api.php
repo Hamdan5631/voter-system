@@ -43,6 +43,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::apiResource('wards', WardController::class);
         Route::get('panchayats/{panchayat}/wards', [WardController::class, 'getByPanchayat'])->name('api.panchayats.wards');
         Route::post('wards/clone', [WardController::class, 'cloneWard'])->name('api.wards.clone');
+        Route::delete('wards/{ward}/revert', [WardController::class, 'revertClonedWard'])->name('api.wards.revert');
     });
 
     // Booths routes (Superadmin & Team Lead)

@@ -64,7 +64,7 @@ class WardController extends Controller
      */
     public function show(Ward $ward)
     {
-        $ward->load(['users', 'voters', 'panchayat']);
+        $ward->load(['users', 'voters', 'panchayat', 'clonedFrom', 'clonedWards']);
 
         return response()->json($ward, 200);
     }
@@ -141,12 +141,13 @@ class WardController extends Controller
         $sourceBooths = Booth::where('ward_id', $sourceWard->id)->get();
 
         return DB::transaction(function () use ($sourceWard, $sourceBooths, $validated) {
-            // Create new ward with same panchayat_id
+            // Create new ward with same panchayat_id and track source ward
             $newWard = Ward::create([
                 'name' => $validated['new_ward_name'],
                 'ward_number' => $validated['new_ward_number'],
                 'panchayat_id' => $sourceWard->panchayat_id,
                 'description' => $sourceWard->description,
+                'cloned_from_ward_id' => $sourceWard->id,
             ]);
 
             // Clone booths and create mapping (old_booth_id => new_booth_id)
@@ -178,11 +179,62 @@ class WardController extends Controller
             return response()->json([
                 'message' => 'Ward cloned successfully with fresh data',
                 'data' => [
-                    'new_ward' => $newWard->load('panchayat'),
+                    'new_ward' => $newWard->load(['panchayat', 'clonedFrom']),
+                    'source_ward_id' => $sourceWard->id,
+                    'source_ward_name' => $sourceWard->name,
                     'cloned_booths_count' => count($boothMapping),
                     'cloned_voters_count' => count($voterMapping),
                 ],
             ], 201);
+        });
+    }
+
+    /**
+     * Revert/delete a cloned ward (only works for cloned wards).
+     */
+    public function revertClonedWard(Request $request, Ward $ward)
+    {
+        // Check if this ward was cloned
+        if (!$ward->cloned_from_ward_id) {
+            return response()->json([
+                'message' => 'This ward is not a cloned ward. Only cloned wards can be reverted.',
+                'error' => 'not_cloned',
+            ], 422);
+        }
+
+        // Get source ward info before deletion
+        $sourceWard = $ward->clonedFrom;
+        $boothsCount = Booth::where('ward_id', $ward->id)->count();
+        $votersCount = Voter::where('ward_id', $ward->id)->count();
+        $usersCount = $ward->users()->count();
+
+        return DB::transaction(function () use ($ward, $sourceWard, $boothsCount, $votersCount, $usersCount) {
+            // Store info before deletion
+            $wardInfo = [
+                'id' => $ward->id,
+                'name' => $ward->name,
+                'ward_number' => $ward->ward_number,
+            ];
+
+            // Delete the ward (cascades will handle voters and booths)
+            $ward->delete();
+
+            return response()->json([
+                'message' => 'Cloned ward reverted successfully',
+                'data' => [
+                    'reverted_ward' => $wardInfo,
+                    'source_ward' => $sourceWard ? [
+                        'id' => $sourceWard->id,
+                        'name' => $sourceWard->name,
+                        'ward_number' => $sourceWard->ward_number,
+                    ] : null,
+                    'deleted_counts' => [
+                        'booths' => $boothsCount,
+                        'voters' => $votersCount,
+                        'users' => $usersCount,
+                    ],
+                ],
+            ], 200);
         });
     }
 }

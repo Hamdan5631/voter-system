@@ -19,6 +19,7 @@ class Ward extends Model
         'ward_number',
         'panchayat_id',
         'description',
+        'cloned_from_ward_id',
     ];
 
     /**
@@ -67,5 +68,21 @@ class Ward extends Model
     public function panchayat()
     {
         return $this->belongsTo(Panchayat::class);
+    }
+
+    /**
+     * Get the source ward that this ward was cloned from.
+     */
+    public function clonedFrom()
+    {
+        return $this->belongsTo(Ward::class, 'cloned_from_ward_id');
+    }
+
+    /**
+     * Get all wards that were cloned from this ward.
+     */
+    public function clonedWards()
+    {
+        return $this->hasMany(Ward::class, 'cloned_from_ward_id');
     }
 }
