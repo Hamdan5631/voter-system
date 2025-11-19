@@ -20,7 +20,10 @@ class VoterController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
-        $query = Voter::query()->select('id', 'serial_number', 'ward_id', 'panchayat_id', 'booth_id', 'image_path')->with(['ward','panchayat', 'booth']);
+        $query = Voter::query()
+        ->removeColumns(['status_history'])
+        ->select('id', 'serial_number', 'ward_id', 'panchayat_id', 'booth_id', 'image_path')
+        ->with(['ward','panchayat', 'booth']);
 
         // Superadmin can see all voters
         if (!$user->isSuperadmin()) {
