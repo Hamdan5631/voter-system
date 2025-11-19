@@ -66,11 +66,6 @@ class VoterController extends Controller
 
         $voters = $query->latest()->paginate($request->get('per_page', 15));
 
-        // Hide status_history from the response
-        $voters->getCollection()->transform(function ($voter) {
-            return $voter->makeHidden('status_history');
-        });
-
         return response()->json($voters, 200);
     }
 
