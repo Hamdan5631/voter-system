@@ -21,9 +21,9 @@ class VoterController extends Controller
     {
         $user = $request->user();
         $query = Voter::query()
-        ->removeColumns(['status_history'])
-        ->select('id', 'serial_number', 'ward_id', 'panchayat_id', 'booth_id', 'image_path')
-        ->with(['ward','panchayat', 'booth']);
+            ->select('id', 'serial_number', 'ward_id', 'panchayat_id', 'booth_id', 'image_path')
+            ->with(['ward', 'panchayat', 'booth'])
+            ->withoutAppends(['status_history']);
 
         // Superadmin can see all voters
         if (!$user->isSuperadmin()) {
