@@ -21,9 +21,8 @@ class VoterController extends Controller
     {
         $user = $request->user();
         $query = Voter::query()
-            ->select('id', 'serial_number', 'ward_id', 'panchayat_id', 'booth_id', 'image_path')
-            ->with(['ward', 'panchayat', 'booth'])
-            ->withoutAppends(['status_history']);
+        ->select('id', 'serial_number', 'ward_id', 'panchayat_id', 'booth_id', 'image_path')
+        ->with(['ward','panchayat', 'booth']);
 
         // Superadmin can see all voters
         if (!$user->isSuperadmin()) {
@@ -66,6 +65,11 @@ class VoterController extends Controller
         }
 
         $voters = $query->latest()->paginate($request->get('per_page', 15));
+
+        // Hide status_history from the response
+        $voters->getCollection()->transform(function ($voter) {
+            return $voter->makeHidden('status_history');
+        });
 
         return response()->json($voters, 200);
     }
